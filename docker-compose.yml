@@ -1,0 +1,26 @@
+version: '3.4'
+
+services:
+
+  webserver:
+    container_name: saas-frontend-webserver-dev
+    image: nginx:1.19.8-alpine
+    networks:
+      - saas-wordpress-dmz
+    ports:
+      - '37.128.131.22:80:80'
+      - '37.128.131.22:443:443'
+    volumes:
+      - ./logs/nginx/:/var/log/nginx
+      - ./public:/usr/share/nginx/html
+    restart: unless-stopped
+
+networks:
+  saas-wordpress-dmz:
+    external:
+       name: wordpress_saas-wordpress-dmz
+
+networks:
+  saas-wordpress-dmz:
+    external:
+       name: saas-wordpress-dev_saas-wordpress-dmz

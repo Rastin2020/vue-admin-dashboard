@@ -1,0 +1,17 @@
+{
+  "name": "public",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "http-vue-loader": "^1.4.2",
+    "open-iconic": "^1.1.1",
+    "vue": "^2.6.12",
+    "vue-router": "^3.5.1"
+  }
+}
