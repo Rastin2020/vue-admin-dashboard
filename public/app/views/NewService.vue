@@ -1,37 +1,44 @@
 <template>
   <div>
-      <Headercomp lefttext="DASHBOARD" leftlink="/#/dashboard" righttext="LOG OUT" rightlink="/#/login"></Headercomp>
+      <Headercomp lefttext="DASHBOARD" righttext="LOG OUT" showorganizationsdropdown="true"
+      showorganizationsdropdownorganizations="true"></Headercomp>
 
       <div class="main-container">
 
         <h1>Add Service</h1>
+        <br>
 
-        <form class="two-third" name="new-service" action="./new-service" method="post">
+        <div class="two-third form-page">
           <label for="service_name">Name <span class="required">*<span></label>
           <br>
-          <input class="form-input full-width" type="text" name="service_name" id="service_name" required>
+          <input class="form-input full-width" type="text" name="service_name" id="service_name" v-model="serviceName">
           <br><br>
           <label for="service_email">Email <span class="required">*<span></label>
           <br>
-          <input class="form-input full-width" type="email" name="service_email" id="service_email" required>
+          <input class="form-input full-width" type="email" name="service_email" id="service_email" v-model="serviceEmail">
           <br><br>
-          <label for="service_organisation">Organization</label>
+          <label for="service_organisation">Organization <span class="required">*<span></label>
           <br>
-          <select class="form-input full-width" name="service_organisation" id="service_organisation">
-            <option><option>
+          <select class="form-input full-width" name="service_organisation" id="service_organisation" v-model="organisationID">
+            <option hidden disabled selected value> -- Select -- </option>
+            <option v-if="organizationArray.length === 0">No organizations found.</option>
+            <option v-for="(organisation, index) in organizationArray" v-bind:value="organisation._id" :key="index">{{organisation.name}}</option>
           </select>
           <br><br>
           <label for="service_application">Application <span class="required">*</span></label>
           <br>
-          <select class="form-input full-width" name="service_application" id="service_application" required>
+          <select class="form-input full-width" name="service_application" id="service_application" v-model="application">
+            <option hidden disabled selected value> -- Select -- </option>
             <option>Wordpress</option>
             <option>Drupal 7</option>
             <option>Drupal 8</option>
+            <option>Drupal 9</option>
           </select>
           <br><br>
           <label for="service_environment">Environment <span class="required">*</span></label>
           <br>
-          <select class="form-input full-width" name="service_environment" id="service_environment" required>
+          <select class="form-input full-width" name="service_environment" id="service_environment" v-model="environment">
+            <option hidden disabled selected value> -- Select -- </option>
             <option>Test</option>
             <option>UAT</option>
             <option>Production</option>
@@ -39,13 +46,31 @@
           <br><br>
           <label for="service_domain">Domain <span class="required">*</span></label>
           <br>
-          <input class="form-input full-width" placeholder="mywordpress.encircle.technology" type="url" 
-          name="service_domain" id="service_domain" required>
-          <p><i>Please start the domain with <span class="input-hints-format">http://</span></i></p>
+          <input class="form-input full-width" placeholder="http://mywordpress.encircle.technology" type="url" 
+          name="service_domain" id="service_domain" v-model="serviceDomain">
+          <br><br>
+          <div v-if="errorMessage !== ''" class="alerts-area" ref="error">
+          {{errorMessage}}
+          </div>
+          <div v-if="successMessage !== ''" class="success-area" ref="error">
+            {{successMessage}}
+          </div>
           <br>
-          <button type="submit" name="submit" class="btn btn-animate">Create</button>    
-        </form>
+          <div class="buttons-area">
+            <button onclick="location.href = '/#/dashboard'" class="main-button cancel-button no-vertical-padding">
+            Return to Dashboard</button>
+            <button v-on:click="create_service(); scroll('error');" name="submit" 
+            class="main-button no-vertical-padding unique-services float-right">Create</button>    
+          </div>
+          <br>
+        </div>
 
+      </div>
+
+      <div class="loading-modal" v-if="loader">
+        <div class="modal-content">
+          <div class="spinning-loader"></div>
+        </div>
       </div>
 
       <Footercomp></Footercomp>
@@ -54,11 +79,6 @@
 
 <script>
 
-  module.exports = {
-  components: {
-    'Headercomp': httpVueLoader('app/components/Header.vue'),
-    'Footercomp': httpVueLoader('app/components/Footer.vue')
-  }
-}
+module.exports = saasApp.controllers.NewServiceController;
 
 </script>

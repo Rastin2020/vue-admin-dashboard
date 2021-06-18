@@ -4,22 +4,15 @@
     
     <div class="main-container">
 
-      <h1>Log In</h1>
+      <h1>Forgot Password</h1>
       <br>
       
       <div class="two-third form-page">
-        <label for="user_login">Username or Email Address</label>
+        <label for="recover_email">Please enter your email address</label>
         <br>
-        <input class="form-input full-width" type="text" name="log" id="user_login" v-model="loginUsername">
+        <input class="form-input full-width" type="email" name="log" id="recover_email" v-model="userLogin">
         <br><br>
-        <label for="user_pass">Password</label>
-        <br>
-        <input class="form-input full-width" type="password" name="pwd" id="user_pass" v-model="userPassword">
-        <br><br>
-        <input type="checkbox" name="rememberme" id="rememberme" value="forever" v-model="rememberMe">
-        <label for="rememberme">Remember Me</label>
-        <br><br>
-        <button v-on:click="login(); scroll('error');" name="submit" class="main-button no-vertical-padding">Log In</button>
+        <button v-on:click="recover_password(); scroll('error')" name="submit" class="main-button no-vertical-padding">Recover Password</button>
         <br><br>
         <div v-if="errorMessage !== ''" class="alerts-area" ref="error">
           {{errorMessage}}
@@ -30,7 +23,6 @@
         <br>
         <ul class="tml-links">
             <li><a href="/#/register">Register New Account</a></li>
-            <li><a href="/#/forgot-password">Forgot Your Password?</a></li>
         </ul>
       </div>
 
@@ -49,6 +41,6 @@
 
 <script>
 
-module.exports = saasApp.controllers.LoginController;
+module.exports = saasApp.controllers.ForgotPasswordController;
 
 </script>

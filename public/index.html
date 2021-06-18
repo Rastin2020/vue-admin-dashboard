@@ -1,21 +1,51 @@
 <!doctype html>
+
 <html lang="en">
+
   <head>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title>SAAS FRONTEND</title>
+
+    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" 
     integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    
+    <!-- Stripe JS -->
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <!-- VUE + Axios + VueRouter + httpVueLoader -->
     <script src="node_modules/vue/dist/vue.js"></script>
-    <script src="node_modules/vue-router/dist/vue-router.js"></script>
     <script src="node_modules/http-vue-loader/src/httpVueLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="node_modules/vue-router/dist/vue-router.js"></script>
+
+    <!-- our app javascript controllers -->
+    <script src="app/app.js"></script>
+    <script src="app/controllers/ForgotPasswordController.js"></script>
+    <script src="app/controllers/DashboardController.js"></script>
+    <script src="app/controllers/LoginController.js"></script>
+    <script src="app/controllers/NewOrganizationController.js"></script>
+    <script src="app/controllers/NewServiceController.js"></script>
+    <script src="app/controllers/RegisterController.js"></script>
+    <script src="app/controllers/OrganizationsController.js"></script>
+    <script src="app/controllers/InvoicesController.js"></script>
+    <!-- BOOTSTRAP -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" 
+    integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" 
+    integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
+
+    <!-- MAIN -->
     <link rel="stylesheet" href="main.css">
-    <link rel="stylesheet" href="app/assets/styles/tables.css">
+  
   </head>
  
   <body>
+    
     <div id="app">
       <router-view></router-view>
     </div>
@@ -27,7 +57,10 @@
         { path: '/register', component: httpVueLoader('app/views/Register.vue') },
         { path: '/dashboard', component: httpVueLoader('app/views/Dashboard.vue') },
         { path: '/new-organization', component: httpVueLoader('app/views/NewOrganisation.vue') },
-        { path: '/new-service', component: httpVueLoader('app/views/NewService.vue') }
+        { path: '/new-service', component: httpVueLoader('app/views/NewService.vue') },
+        { path: '/forgot-password', component: httpVueLoader('app/views/ForgotPassword.vue') },
+        { path: '/organizations', component: httpVueLoader('app/views/Organizations.vue') },
+        { path: '/invoices', component:httpVueLoader('app/views/Invoices.vue') }
       ]
 
       const router = new VueRouter({
@@ -41,4 +74,5 @@
     </script> 
 
   </body>
+
 </html>
