@@ -1116,6 +1116,14 @@ div {
   }
 }
 
+
+@media (max-width: 392px) {
+  .unique-restore.float-right {
+    float: left !important;
+    margin-top: 10px;
+  }
+}
+
 @media (min-width: 410px) and (max-width: 440px) {
   .header .container a {
     font-size: 0.95em;

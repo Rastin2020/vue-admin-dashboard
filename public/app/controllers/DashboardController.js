@@ -207,6 +207,9 @@
 
       close_restore_confirm_modal: function() {
         this.restoreConfirmId = "";
+        this.restoreTagConfirmInput = "";
+        this.confirmRestoreSuccessMessage = "";
+        this.confirmRestoreErrorMessage = "";
         this.showRestoreConfirmModal = false;
       },
 
@@ -240,11 +243,12 @@
           this.confirmRestoreErrorMessage = "Incorrect. Please try again.";
           this.confirmRestoreSuccessMessage = "";
           return;
-        }
+        } 
 
         this.confirmRestoreErrorMessage = "";
-        this.confirmRestoreSuccessMessage = "Restored";
+        this.confirmRestoreSuccessMessage = "Restoring...";
         this.action_service(this.restoreConfirmId, 'restore');
+        this.close_restore_confirm_modal();
 
       },
 

@@ -111,7 +111,7 @@
                             <button class="small-screen-margins" v-on:click="open_serv_snapshot_modal(service)">
                               Snapshot</button>
                             <br><br><br>
-                            <button class="small-screen-margins" v-on:click="open_restore_confirm_modal(service._id, this.restoreSnapshotOption)">Restore</button>
+                            <button class="small-screen-margins" v-on:click="open_restore_confirm_modal(service._id)">Restore</button>
                             <select class="restore-select" v-on:change="set_restore_snapshot_option">
                               <option>Snapshots</option>
                               <option v-for="(snapshot, index) in orgSnapshots" v-bind:value="snapshot._id" 
@@ -416,12 +416,13 @@
           <div class="modal-container">
             <h1>Confirm Restore</h1>
             <br>
-            <label for="delete_name">Type in the snapshot tag to restore <span class="required">*<span></label>
+            <label for="delete_name">Type in the snapshot id to restore <span class="required">*<span></label>
             <br>
             <input v-on:keyup.enter="submit_restore_confirm" class="form-input full-width" type="text" 
               name="delete_name" v-model="restoreTagConfirmInput">  
             <br><br>
-            <p>Name: <span class="input-hints-format">{{this.restoreSnapshotOption}}</span></p>
+            <p v-if="this.restoreSnapshotOption === 'Snapshots'">Snapshot ID: <span class="input-hints-format">Please select a Snapshot!</span></p>
+            <p v-else>Snapshot ID: <span class="input-hints-format">{{this.restoreSnapshotOption}}</span></p>
             <div v-if="confirmRestoreErrorMessage !== ''" class="alerts-area">
               {{confirmRestoreErrorMessage}}
             </div>
@@ -430,7 +431,7 @@
             </div>
             <br>
             <button v-on:click="close_restore_confirm_modal" class="edit-modal-submit">CANCEL</button>
-            <button v-on:click="submit_restore_confirm" class="close-edit-modal cancel-button float-right">
+            <button v-on:click="submit_restore_confirm" class="unique-restore close-edit-modal cancel-button float-right">
               RESTORE</button>
           </div>
         </div>                  
