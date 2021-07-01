@@ -5,8 +5,7 @@
   saasApp.controllers.NewOrganizationController = {
 
     components: {
-      'Headercomp': httpVueLoader('app/components/Header.vue'),
-      'Footercomp': httpVueLoader('app/components/Footer.vue')
+      'Headercomp': httpVueLoader('app/components/Header.vue')
     },
 
     data: function() {
@@ -31,11 +30,13 @@
         if ( name === "" ) {
           
           this.errorMessage = "Please fill in the name.";
+          this.successMessage = "";
           console.log("blank name");
   
         } else if ( name.length > 20 ) {
   
           this.errorMessage = "Name cannot be more than 20 characters.";
+          this.successMessage = "";
           console.log("Max 20 characters allowed for name");
   
         } else {
@@ -43,6 +44,7 @@
           if ( members === "" ) {
   
             this.errorMessage = "Please fill in the members.";
+            this.successMessage = "";
             console.log("blank members")
   
           } else {
@@ -57,6 +59,7 @@
             for (i=0; i<membersArray.length; i++) {
               if ( !(emailRegex.test(membersArrayProcessed[i])) ) {
                 this.errorMessage = "Please check your email(s).";
+                this.successMessage = "";
                 console.log("one or more email is in the wrong format");
                 return;
               }

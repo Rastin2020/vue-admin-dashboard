@@ -2,8 +2,8 @@
 
   <div>
 
-    <img class="general-margin" id="user-profile-icon" src="app/assets/icons/profile-icon.png" width="35px" height="35px"
-    v-on:click="toggleOrganizationsDropdown">
+    <img class="general-margin" id="user-profile-icon" src="app/assets/icons/profile-icon.png" width="35px" 
+      height="35px" v-on:click="toggleOrganizationsDropdown">
     
     <div style="margin-right: 0;" class="org-dropdown-menu" v-if="showOrganizationsDropdownContent">
 
@@ -27,12 +27,18 @@
 
         <div v-if="organizationsArray.length === 0" class="center-align general-margin ninety-two-width">
           <p>No Organizations Found.</p>
-          <a href="/#/new-organization"><img src="app/assets/icons/plus.png" class="pointer" width="30px" height="30px"></a>
+          <a href="/#/new-organization"><img src="app/assets/icons/plus.png" class="pointer" width="30px" 
+            height="30px"></a>
         </div>
         <div v-else class="full-width">
           <h4 class="center-align general-margin">Organizations</h4>
           <a href="/#/organizations" class="main-button see-all small-text">See All</a>
-          <a class="float-right margin-right" href="/#/new-organization"><img src="app/assets/icons/plus.png" class="pointer" width="30px" height="30px"></a>
+          <a class="float-right margin-right" href="/#/new-organization"><img src="app/assets/icons/plus.png" 
+            class="pointer" width="30px" height="30px"></a>
+        </div>
+        <div class="full-width general-padding">
+          <input v-on:keyup="load_user_organisation_details(orgSearchTerm)" v-model="orgSearchTerm" type="search" 
+            class="search-bar" placeholder="Search:"> 
         </div>
         <div v-if="orgDeleteErrorMessage !== ''" class="alerts-area left-spaced" ref="orgError">
           {{orgDeleteErrorMessage}}
@@ -55,10 +61,14 @@
             <br><br><br>
             <div class="card-buttons no-left-space ">
               <div class="edit-button" v-on:click="open_org_modal(organisation)">
-                <img class="general-margin-small pointer" src="app/assets/icons/edit.png" width="18px" height="18px">
+                <img class="general-margin-small" src="app/assets/icons/edit.png" width="17px" height="18px">
               </div>
-              <div class="delete-button" v-on:click="open_delete_confirm_modal(organisation.name, 'org', organisation._id)">
-                <img class="general-margin-small pointer" src="app/assets/icons/delete.png" width="16px" height="18px">
+              <div class="select-button" v-on:click="select_org_default(organisation._id)">
+                <img class="vertical-margin-small" src="app/assets/icons/click.png" width="15px" height="20px">
+              </div>
+              <div class="delete-button" v-on:click="open_delete_confirm_modal(organisation.name, 'org', 
+                organisation._id)">
+                <img class="general-margin-small" src="app/assets/icons/delete.png" width="14px" height="18px">
               </div>
             </div>
           </div>
@@ -76,13 +86,13 @@
             <br>
             <label for="organisation_name">Name <span class="required">*<span></label>
             <br>
-            <input class="form-input full-width" :placeholder="this.editName" type="text" 
-            name="organisation_name" :id="'edit-organisation-name-' + index" v-model="editName">
+            <input v-on:keyup.enter="submit_org_edit(); scroll('error');" class="form-input full-width" 
+              :placeholder="this.editName" type="text" name="organisation_name" v-model="editName">
             <br><br>
             <label for="organisation_members">Members <span class="required">*<span></label>
             <br>
-            <textarea class="full-width top-margin" :placeholder="this.editMembers" name="organisation_members" rows="4" 
-            :id="'edit-organisation-members-' + index" v-model="editMembers"></textarea>
+            <textarea class="full-width top-margin" :placeholder="this.editMembers" name="organisation_members" 
+              rows="4" v-model="editMembers"></textarea>
             <p><i>Comma seperated list of emails.</i></p> 
             <div v-if="orgErrorMessage !== ''" class="alerts-area" ref="error">
               {{orgErrorMessage}}
@@ -106,8 +116,8 @@
             <br>
             <label for="delete_name">Type in the name to delete <span class="required">*<span></label>
             <br>
-            <input class="form-input full-width" type="text" name="delete_name" 
-            :id="'delete-name-' + index" v-model="deleteNameConfirmInput">  
+            <input v-on:keyup.enter="submit_delete_confirm(); scroll('error');" class="form-input full-width" 
+              type="text" name="delete_name" v-model="deleteNameConfirmInput">  
             <br><br>
             <p>Name: <span class="input-hints-format">{{this.deleteNameConfirm}}</span></p>
             <div v-if="confirmDeleteErrorMessage !== ''" class="alerts-area">
@@ -118,7 +128,8 @@
             </div>
             <br><br>
             <button v-on:click="close_delete_confirm_modal" class="edit-modal-submit">CANCEL</button>
-            <button v-on:click="submit_delete_confirm" class="close-edit-modal cancel-button float-right">DELETE</button>
+            <button v-on:click="submit_delete_confirm" class="close-edit-modal cancel-button float-right">
+              DELETE</button>
           </div>
         </div>                  
       </div>
@@ -141,7 +152,7 @@ const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0
 module.exports = {
 
   props: {
-    updatePlan: Boolean,
+    update: Boolean,
     showthedropdown: String
   }, 
 
@@ -150,6 +161,7 @@ module.exports = {
       loader: false,
       showOrganizationsDropdownContent: false,
       organizationsArray: [],
+      orgSearchTerm: "",
       showOrgEditModal: false,
       editName: "",
       editMembers: [],
@@ -408,11 +420,20 @@ module.exports = {
       ).then(function (result) {
 
         const objectResult = JSON.parse(result.request.response);
-        organizationsArray = objectResult.body;
+        organizationsArrayResponse = objectResult.body;
+        organizationsArray = [];
+
+        if ( organizationsArrayResponse.length > 5 ) {
+          for( i=0; i<5; i++ ) {
+            organizationsArray.push(organizationsArrayResponse[i]);
+          }
+        } else {
+          organizationsArray = organizationsArrayResponse;
+        }
 
         if ( orgSearchTerm === "" || orgSearchTerm === undefined ) {
 
-          self.organizationsArray = objectResult.body;
+          self.organizationsArray = organizationsArray;
           self.orgInitialRendering = false;
           self.loader = false;
 
@@ -446,6 +467,15 @@ module.exports = {
 
     },
 
+    select_org_default: function(orgID) {
+      sessionStorage.setItem("orgID", orgID);
+     if ( this.$route.fullPath === "/dashboard" ) {
+        location.reload();
+      } else {
+        window.location.href = "/#/dashboard";
+      };
+    },
+
     get_current_plan: function() {
 
         let authToken;
@@ -477,12 +507,11 @@ module.exports = {
 
         });
 
-      }
+    }
 
   },
 
   mounted() {
-    
     this.load_user_organisation_details();
     this.get_current_plan();
     

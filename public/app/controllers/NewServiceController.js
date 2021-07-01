@@ -6,8 +6,7 @@
   saasApp.controllers.NewServiceController = {
 
     components: {
-      'Headercomp': httpVueLoader('app/components/Header.vue'),
-      'Footercomp': httpVueLoader('app/components/Footer.vue')
+      'Headercomp': httpVueLoader('app/components/Header.vue')
     },
 
     data: function() {
@@ -16,6 +15,7 @@
         serviceName: "",
         serviceEmail: "",
         organisationID: null,
+        serviceSize: null,
         application: null,
         environment: null,
         serviceDomain: "",
@@ -72,6 +72,7 @@
     
         const name = this.serviceName;
         const email = this.serviceEmail;
+        const size = this.serviceSize;
         const organization = this.organisationID;
         const application = this.application;
         const environment = this.environment;
@@ -82,6 +83,7 @@
         if ( name === "" ) {
           
           this.errorMessage = "Please fill in the name.";
+          this.successMessage = "";
           console.log("blank name");
         
         } else if ( name.length > 20 ) {
@@ -94,11 +96,13 @@
           if ( email === "" ) {
   
             this.errorMessage = "Please fill in the email.";
+            this.successMessage = "";
             console.log("blank email");
   
           } else if ( !(emailRegex.test(email)) ) {
   
             this.errorMessage = "Please check your email.";
+            this.successMessage = "";
             console.log("email format is wrong");
   
           } else {
@@ -106,13 +110,21 @@
             if ( organization === null || organization === undefined ) {
   
               this.errorMessage = "Please pick an organization.";
+              this.successMessage = "";
               console.log("please pick an organisation");
   
+            } else if ( size === null || size === undefined ) {
+
+              this.errorMessage = "Please pick a service size.";
+              this.successMessage = "";
+              console.log("please pick a service size");
+
             } else {
   
               if ( application === null ) {
   
                 this.errorMessage = "Please pick an application.";
+                this.successMessage = "";
                 console.log("please pick an application");
   
               } else {
@@ -120,6 +132,7 @@
                 if ( environment === null ) {
   
                   this.errorMessage = "Please pick an environment.";
+                  this.successMessage = "";
                   console.log("please pick an environment");
   
                 } else {
@@ -127,11 +140,13 @@
                   if ( domain === "" ) {
   
                     this.errorMessage = "Please fill in the domain.";
+                    this.successMessage = "";
                     console.log("blank domain");
   
                   } else if ( !(urlRegex.test(domain)) ) {
   
                     this.errorMessage = "Domain format is wrong.";
+                    this.successMessage = "";
                     console.log("domain is in wrong format");
   
                   } else {
@@ -151,6 +166,7 @@
                       {
                         name,
                         email,
+                        size,
                         organization,
                         application,
                         environment,
@@ -165,7 +181,7 @@
                     ).then(function (result) {
 
                       const objectResult = JSON.parse(result.request.response);
-                      console.log(objectResult);
+                      console.log(result);
                       console.log(result.status);
 
                       if ( objectResult.response.code === 201 ) {

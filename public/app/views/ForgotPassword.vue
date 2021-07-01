@@ -10,9 +10,11 @@
       <div class="two-third form-page">
         <label for="recover_email">Please enter your email address</label>
         <br>
-        <input class="form-input full-width" type="email" name="log" id="recover_email" v-model="userLogin">
+        <input v-on:keyup.enter="recover_password(); scroll('error')" class="form-input full-width" 
+          type="email" name="log" v-model="userLogin">
         <br><br>
-        <button v-on:click="recover_password(); scroll('error')" name="submit" class="main-button no-vertical-padding">Recover Password</button>
+        <button v-on:click="recover_password(); scroll('error')" name="submit" class="main-button 
+          no-vertical-padding">Recover Password</button>
         <br><br>
         <div v-if="errorMessage !== ''" class="alerts-area" ref="error">
           {{errorMessage}}
@@ -34,9 +36,7 @@
       </div>
     </div>
 
-    <Footercomp></Footercomp>
   </div>
-  
 </template>
 
 <script>

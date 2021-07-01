@@ -10,16 +10,18 @@
 
         <br>
         <button onclick="location.href = '/#/dashboard'" class="cancel-button">Services and Snapshots</button>
-        <button onclick="location.href = '/#/new-organization'" class="top-bottom-margin unique-organizations float-right">New Organization</button>
+        <button onclick="location.href = '/#/new-organization'" class="top-bottom-margin unique-organizations 
+          float-right">New Organization</button>
         <br><br><br>
 
         <div>
 
-          <div v-if="showOrganizations" id="organization-table_wrapper" class="dataTables_wrapper no-footer">
+          <div v-if="showOrganizations">
 
             <br>
             <div class="paginate-background-area">
-              <input v-on:keyup="load_user_organisation_details(orgSearchTerm)" v-model="orgSearchTerm" type="search" id="org-search" class="search-bar" 
+              <input v-on:keyup="load_user_organisation_details(orgSearchTerm)" v-model="orgSearchTerm" 
+                type="search" id="org-search" class="search-bar" 
               placeholder="Search:">
             </div>
 
@@ -38,7 +40,8 @@
                           <div class="mt-3">
                             <select :class="['members-list-style', 'members-list-'+ index]">
                               <option>Members</option>
-                              <option v-for="(member, index) in organisation.members" :key="index">{{member}}</option>
+                              <option v-for="(member, index) in organisation.members" :key="index">
+                                {{member}}</option>
                             </select>
                           </div>
                         </div>
@@ -46,10 +49,15 @@
                     </div>
                     <div class="card-buttons">
                       <div class="edit-button" v-on:click="open_org_modal(organisation)">
-                        <img class="edit-icon pointer" 
-                        src="app/assets/icons/edit.png">
+                        <img class="edit-icon pointer" src="app/assets/icons/edit.png">
                       </div>
-                      <div class="delete-button" v-on:click="open_delete_confirm_modal(organisation.name, 'org', organisation._id), scroll('orgError');">
+                      <div class="select-service-button margin-left-fix" v-on:click="select_org_default(
+                        organisation._id)">
+                        <img class="vertical-margin-small" src="app/assets/icons/click.png" width="18px" 
+                          height="24px">
+                      </div>
+                      <div class="delete-button" v-on:click="open_delete_confirm_modal(organisation.name, 
+                        'org', organisation._id), scroll('orgError');">
                         <img class="delete-icon pointer" src="app/assets/icons/delete.png">
                       </div>
                     </div>
@@ -66,13 +74,15 @@
                     <br>
                     <label for="organisation_name">Name <span class="required">*<span></label>
                     <br>
-                    <input class="form-input full-width" :placeholder="this.editName" type="text" 
-                    name="organisation_name" :id="'edit-organisation-name-' + index" v-model="editName">
+                    <input v-on:keyup.enter="submit_org_edit" class="form-input full-width" 
+                      :placeholder="this.editName" 
+                      type="text" name="organisation_name" v-model="editName">
                     <br><br>
                     <label for="organisation_members">Members <span class="required">*<span></label>
                     <br>
-                    <textarea class="full-width top-margin" :placeholder="this.editMembers" name="organisation_members" rows="4" 
-                    :id="'edit-organisation-members-' + index" v-model="editMembers"></textarea>
+                    <textarea class="full-width top-margin" :placeholder="this.editMembers" 
+                      name="organisation_members" 
+                      rows="4"  v-model="editMembers"></textarea>
                     <p><i>Comma seperated list of emails.</i></p> 
                     <br>
                     <div v-if="orgErrorMessage !== ''" class="alerts-area" ref="error">
@@ -110,7 +120,8 @@
             <br>
             <label for="delete_name">Type in the name to delete <span class="required">*<span></label>
             <br>
-            <input class="form-input full-width" type="text" name="delete_name" 
+            <input v-on:keyup.enter="submit_delete_confirm" class="form-input full-width" type="text" 
+              name="delete_name" 
             :id="'delete-name-' + index" v-model="deleteNameConfirmInput">  
             <br><br>
             <p>Name: <span class="input-hints-format">{{this.deleteNameConfirm}}</span></p>
@@ -122,7 +133,8 @@
             </div>
             <br>
             <button v-on:click="close_delete_confirm_modal" class="edit-modal-submit">CANCEL</button>
-            <button v-on:click="submit_delete_confirm" class="close-edit-modal cancel-button unique-organizations-delete float-right">DELETE</button>
+            <button v-on:click="submit_delete_confirm" class="close-edit-modal cancel-button 
+              unique-organizations-delete float-right">DELETE</button>
           </div>
         </div>                  
       </div>
@@ -134,7 +146,6 @@
       </div>
     </div>
 
-  <Footercomp></Footercomp>
   </div>
 </template>
 

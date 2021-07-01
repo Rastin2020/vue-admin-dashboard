@@ -3,8 +3,7 @@
   saasApp.controllers.LoginController = {
 
     components: {
-      'Headercomp': httpVueLoader('app/components/Header.vue'),
-      'Footercomp': httpVueLoader('app/components/Footer.vue')
+      'Headercomp': httpVueLoader('app/components/Header.vue')
     },
 
     data: function () {
@@ -31,6 +30,7 @@
         if ( username === "" ) {
   
           this.errorMessage = "Please fill in the username or email."
+          this.successMessage = "";
           console.log("blank login");
   
         } else {
@@ -38,6 +38,7 @@
           if ( password === "" ) {
   
             this.errorMessage = "Please fill in the password.";
+            this.successMessage = "";
             console.log("blank password");
   
           } else {

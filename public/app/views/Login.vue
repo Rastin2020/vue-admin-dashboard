@@ -10,16 +10,19 @@
       <div class="two-third form-page">
         <label for="user_login">Username or Email Address</label>
         <br>
-        <input class="form-input full-width" type="text" name="log" id="user_login" v-model="loginUsername">
+        <input v-on:keyup.enter="login(); scroll('error');" class="form-input full-width" type="text" 
+          name="log" v-model="loginUsername">
         <br><br>
         <label for="user_pass">Password</label>
         <br>
-        <input class="form-input full-width" type="password" name="pwd" id="user_pass" v-model="userPassword">
+        <input v-on:keyup.enter="login(); scroll('error');" class="form-input full-width" type="password" 
+          name="pwd" v-model="userPassword">
         <br><br>
-        <input type="checkbox" name="rememberme" id="rememberme" value="forever" v-model="rememberMe">
+        <input type="checkbox" name="rememberme" value="forever" v-model="rememberMe">
         <label for="rememberme">Remember Me</label>
         <br><br>
-        <button v-on:click="login(); scroll('error');" name="submit" class="main-button no-vertical-padding">Log In</button>
+        <button v-on:click="login(); scroll('error');" name="submit" class="main-button no-vertical-padding">
+          Log In</button>
         <br><br>
         <div v-if="errorMessage !== ''" class="alerts-area" ref="error">
           {{errorMessage}}
@@ -42,7 +45,6 @@
       </div>
     </div>
 
-    <Footercomp></Footercomp>
   </div>
   
 </template>

@@ -10,27 +10,31 @@
       <div class="two-third form-page">
         <label for="register_login">Username</label>
         <br>
-        <input class="form-input full-width" type="text" name="register_username" id="register_username" v-model="registerUsername">
+        <input v-on:keyup.enter="register(); scroll('error');" class="form-input full-width" type="text" 
+          name="register_username" v-model="registerUsername">
         <br><br>
         <label for="register_email">Email</label>
         <br>
-        <input class="form-input full-width" type="email" name="register_email" id="register_email" v-model="registerEmail">
+        <input v-on:keyup.enter="register(); scroll('error');" class="form-input full-width" type="email" 
+          name="register_email" v-model="registerEmail">
         <br><br>
         <label for="register_password">Password</label>
         <br>
-        <input class="form-input full-width" type="password" name="register_password" id="register_password" 
-        autocomplete="off" v-model="registerPassword">
+        <input v-on:keyup.enter="register(); scroll('error');" class="form-input full-width" type="password" 
+          name="register_password" autocomplete="off" v-model="registerPassword">
         <br><br>
         <label for="register_password_confirm">Confirm Password</label>
         <br>
-        <input class="form-input full-width" type="password" name="register_password_confirm" 
-        id="register_password_confirm" autocomplete="off" v-model="registerPasswordConfirm">
+        <input v-on:keyup.enter="register(); scroll('error');" class="form-input full-width" type="password" 
+          name="register_password_confirm" 
+         autocomplete="off" v-model="registerPasswordConfirm">
         <br><br>
         <p class="text-wrap high-line">Password must be at least twelve characters long, contain a number and 
           special character <span class="input-hints-format">
           ( ! " ? $ % ^ & )<span></p>
         <br>
-        <button v-on:click="register(); scroll('error');" id="register-submit" name="submit" class="main-button no-vertical-padding">Register</button>
+        <button v-on:click="register(); scroll('error');" name="submit" class="main-button no-vertical-padding">
+          Register</button>
         <br><br>
         
         <div v-if="errorMessage !== ''" class="alerts-area" ref="error">
@@ -54,7 +58,6 @@
       </div>
     </div>
 
-    <Footercomp></Footercomp>
   </div>
 </template>
 

@@ -21,6 +21,7 @@
           </tr>
         </thead>
         <tbody>
+          <td v-if="invoicesArray.length === 0">No invoices found.</td>
           <tr v-for="(invoice, index) in invoicesArray" :key="index">
             <td v-if="invoice.number !== null">{{invoice.number}}</td>
             <td v-else>In Progress...</td>
@@ -38,7 +39,8 @@
             <td v-else-if="invoice.status === 'draft' ">In Progress...</td>
             <td v-else-if="invoice.status === 'paid' ">Paid</td>
             <td v-else-if="invoice.status === 'open'">Open Status</td> -->
-            <td v-if="invoice.invoice_pdf !== null "><a :href="invoice.invoice_pdf"><img id="pdf-icon" src="app/assets/icons/pdf.png" width="23px" height="30px"></a></td>
+            <td v-if="invoice.invoice_pdf !== null "><a :href="invoice.invoice_pdf"><img id="pdf-icon" 
+              src="app/assets/icons/pdf.png" width="23px" height="30px"></a></td>
             <td v-else>In Progress...</td>
           </tr>         
         </tbody>
@@ -52,7 +54,6 @@
       </div>
     </div>
 
-    <Footercomp></Footercomp>
   </div>
   
 </template>

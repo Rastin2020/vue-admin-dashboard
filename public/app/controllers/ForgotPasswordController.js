@@ -5,8 +5,7 @@
   saasApp.controllers.ForgotPasswordController = {
 
     components: {
-    'Headercomp': httpVueLoader('app/components/Header.vue'),
-    'Footercomp': httpVueLoader('app/components/Footer.vue')
+    'Headercomp': httpVueLoader('app/components/Header.vue')
     },
 
     data: function () {

@@ -5,24 +5,31 @@
   saasApp.controllers.DashboardController = {
 
     components: {
-      'Headercomp': httpVueLoader('app/components/Header.vue'),
-      'Footercomp': httpVueLoader('app/components/Footer.vue')
+      'Headercomp': httpVueLoader('app/components/Header.vue')
     },
 
     data: function () {
       return {
         loader: false,
+        serviceArrayEmptyMessage: '{"message":"No such organization"}',
+        serviceArrayEmptyMessage2: '{"message":"Not a valid ID"}',
         showServSnapshotModal: false,
         showDeleteConfirmModal: false,
         showServDetailsModal: false,
+        showRestoreConfirmModal: false,
         organizationsArray: [],
         confirmDeleteErrorMessage: "",
         confirmDeleteSuccessMessage: "",
+        confirmRestoreSuccessMessage: "",
+        confirmRestoreErrorMessage: "",
         whichDeleteModal: "",
         deleteConfirmId: "",
+        restoreConfirmId: "",
         editName: "",
         deleteNameConfirmInput: "",
         deleteNameConfirm: "",
+        snapshotTagConfirmInput: "",
+        restoreTagConfirmInput: "",
         orgSearchTerm: "",
         showOrganizations: true,
         organisationToggleText: "Hide Organizations",
@@ -58,6 +65,7 @@
         serviceApplication: "",
         serviceDomain: "",
         serviceEmail: "",
+        serviceSize: "",
         serviceEnvironment: "",
         serviceName: "",
         serviceOrganization: "",
@@ -65,6 +73,7 @@
         serviceStartTimeEpoch: "",
         serviceStartTimeFinalFormat: "", 
         serviceStatus: "",
+        snapshotStatus: "",
         serviceBasicAuthPassword: "",
         serviceBasicAuthUsername: "",
         serviceDatabaseStorage: "",
@@ -129,6 +138,7 @@
         this.serviceApplication = service.application;
         this.serviceDomain = service.domain;
         this.serviceEmail = service.email;
+        this.serviceSize = service.size;
         this.serviceEnvironment = service.environment;
         this.serviceName = service.name;
         this.serviceOrganization = service.organization_name;
@@ -161,6 +171,7 @@
         this.serviceApplication = "";
         this.serviceDomain = "";
         this.serviceEmail = "";
+        this.serviceSize = "";
         this.serviceEnvironment = "";
         this.serviceName = "";
         this.serviceOrganization = "";
@@ -189,6 +200,16 @@
         this.showServDetailsModal = false;
       },
 
+      open_restore_confirm_modal: function(serviceID) {
+        this.restoreConfirmId = serviceID;
+        this.showRestoreConfirmModal = true;
+      },
+
+      close_restore_confirm_modal: function() {
+        this.restoreConfirmId = "";
+        this.showRestoreConfirmModal = false;
+      },
+
       submit_delete_confirm: function() {
 
         if ( this.deleteNameConfirmInput !== this.deleteNameConfirm ) {
@@ -210,6 +231,20 @@
         this.confirmDeleteErrorMessage = "";
         this.confirmDeleteSuccessMessage = "Deleted";
         this.close_delete_confirm_modal();
+
+      },
+
+      submit_restore_confirm: function() {
+
+        if ( this.restoreTagConfirmInput !== this.restoreSnapshotOption ) {
+          this.confirmRestoreErrorMessage = "Incorrect. Please try again.";
+          this.confirmRestoreSuccessMessage = "";
+          return;
+        }
+
+        this.confirmRestoreErrorMessage = "";
+        this.confirmRestoreSuccessMessage = "Restored";
+        this.action_service(this.restoreConfirmId, 'restore');
 
       },
 
@@ -309,13 +344,30 @@
         ).then(function (result) {
           const objectResult = JSON.parse(result.request.response);
           const serviceArray = objectResult.body;
-          console.log("SERVICES: " + JSON.stringify(objectResult));
 
           if ( servSearchTerm === "" || servSearchTerm === undefined || typeof servSearchTerm === "object" ) {
+              const possibleEmptyMessage = JSON.stringify(serviceArray);
+              console.log(possibleEmptyMessage);
 
-            self.serviceArray = serviceArray;
-            self.servInitialRendering = false;
-            self.loader = false;
+            if ( possibleEmptyMessage === '{"message":"No such organization"}' ) {
+
+              self.serviceArray = '{"message":"No such organization"}';
+              self.servInitialRendering = false;
+              self.loader = false;
+
+            } else if ( possibleEmptyMessage === '{"message":"Not a valid ID"}' ) {
+
+              self.serviceArray = '{"message":"Not a valid ID"}';
+              self.servInitialRendering = false;
+              self.loader = false;
+
+            } else {
+
+              self.serviceArray = serviceArray;
+              self.servInitialRendering = false;
+              self.loader = false;
+
+            }
 
           } else {
 
@@ -383,7 +435,7 @@
             }
           ).then(function (result) {
             const objectResult = JSON.parse(result.request.response);
-            console.log(result.status);
+            console.log("snapshots: " + JSON.stringify(objectResult));
 
             for (i=0; i<objectResult.body.length; i++) {
               snapshotArray.push(
@@ -391,6 +443,7 @@
               "application": objectResult.body[i].application,
               "namespace": objectResult.body[i].namespace,
               "organization": objectResult.body[i].organization,
+              "status": objectResult.body[i].status,
               "public": objectResult.body[i].public,
               "service":objectResult.body[i].service,
               "tag": objectResult.body[i].tag,
@@ -432,7 +485,6 @@
             self.orgSnapshotsRestoreArray = snapshotArray;
             self.snapshotInitialRendering = false;
             self.loader = false;
-            console.log(self.orgSnapshots);
 
           })
           .catch(function (error) {
@@ -488,7 +540,7 @@
         }
 
         if ( action === "restore" && this.restoreSnapshotOption === "Snapshots" ) {
-          this.serviceDeleteErrorMessage = "Select a snapshot to restore.";
+          this.confirmRestoreErrorMessage = "Select a snapshot to restore.";
           return;
         }
 
@@ -509,7 +561,6 @@
         ).then(function (result) {
           const objectResult = JSON.parse(result.request.response);
           console.log(objectResult);
-          console.log(result.status);
           self.load_user_service_details();
         })
         .catch(function (error) {
@@ -532,7 +583,6 @@
           ).then(function (result) {
             const objectResult = JSON.parse(result.request.response);
             console.log(objectResult);
-            console.log(result.status);
             self.load_user_service_details();
           })
           .catch(function (error) {
@@ -541,6 +591,10 @@
 
         }
 
+      },
+
+      set_restore_snapshot_option: function(event) {
+        this.restoreSnapshotOption = event.target.value;
       },
 
       delete_service: function(serviceID) {
@@ -565,10 +619,8 @@
             } 
           }
         ).then(function (result) {
-          console.log(result.status);
           const objectResult = JSON.parse(result.request.response);
           const message = objectResult.response.message;
-          console.log(message);
           
           if ( message === "OK" ) {
             self.load_user_service_details();
@@ -600,13 +652,11 @@
         
           this.snapshotErrorMessage = "Please fill in the name.";
           this.snapshotSuccessMessage = "";
-          console.log("blank snapshot name");
   
         } else if ( name.length > 20 ) {
   
           this.snapshotErrorMessage = "Name cannot be more than 20 characters long.";
           this.snapshotSuccessMessage = "";
-          console.log("Max 20 characters allowed for snapshot name");
   
         } else {
 
@@ -634,7 +684,7 @@
             }
           ).then(function (result) {
             const objectResult = JSON.parse(result.request.response);
-            console.log(result.status);
+            console.log(objectResult);
 
             if ( objectResult.body.message === "Service must be running to snapshot" ) {
               self.snapshotErrorMessage = "Service must be running to snapshot.";
@@ -644,11 +694,15 @@
               self.snapshotErrorMessage = "Service already being snapshotted.";
               self.snapshotSuccessMessage = "";
               self.loader = false;
-            } else {
+            } else if ( objectResult.response.message === "OK" ) {
               self.snapshotSuccessMessage = "Snapshot successful.";
               self.load_user_service_details();
               self.load_org_snapshots();
               self.snapshotErrorMessage = "";
+              self.loader = false;
+            } else {
+              self.snapshotErrorMessage =  objectResult.body.message;
+              self.snapshotSuccessMessage = "";
               self.loader = false;
             }
 
@@ -687,7 +741,6 @@
             }
           }
         ).then(function (result) {
-          console.log(result.status);
           const objectResult = JSON.parse(result.request.response);
           console.log(objectResult);
           self.load_org_snapshots();
@@ -702,6 +755,7 @@
       re_render_arrays: function () {
         let self = this;
         self.setInterval_ID = setInterval(function () { 
+          self.load_user_organisation_details();
           self.load_user_service_details(self.servSearchTerm)
           self.load_org_snapshots(self.snapshotSearchTerm)
         }, 3000);
@@ -892,7 +946,7 @@
         const minutes = date.getMinutes();
         const seconds = date.getSeconds();
 
-        return year + "/" + month + "/" + day + " - " + hours + ":" + minutes + ":" + seconds + "s";
+        return year + "/" + month + "/" + day + " - " + hours + ":" + minutes + ":" + seconds;
 
       }
 
@@ -903,6 +957,10 @@
       // Redirect to login page if user isn't logged in (i.e token can't be found in local or session storage):
       if ( sessionStorage.getItem("token") === null && localStorage.getItem("token") === null ) {
         window.location.href = "/#/login";
+      }
+
+      if ( sessionStorage.getItem("orgID") !== null ) {
+        this.selectedOrganisationID = sessionStorage.getItem("orgID");
       }
   
       // Load the user organisation, services and snapshot initially into the DOM:

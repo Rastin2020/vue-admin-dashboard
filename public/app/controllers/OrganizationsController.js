@@ -5,8 +5,7 @@
   saasApp.controllers.OrganizationsController = {
 
     components: {
-      'Headercomp': httpVueLoader('app/components/Header.vue'),
-      'Footercomp': httpVueLoader('app/components/Footer.vue')
+      'Headercomp': httpVueLoader('app/components/Header.vue')
     },
 
     data: function () {
@@ -304,6 +303,12 @@
         this.orgErrorMessage = "";
         this.orgSuccessMessage = "";
         this.showOrgEditModal = false;
+      },
+
+      select_org_default: function(orgID) {
+        console.log("select function called");
+        sessionStorage.setItem("orgID", orgID);
+        window.location.href = "/#/dashboard";
       },
 
       scroll: function(refName) {

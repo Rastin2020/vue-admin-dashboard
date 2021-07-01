@@ -143,6 +143,11 @@ button:hover {
   padding-top: 0 !important;
 }
 
+.adjusted-vertical-padding {
+  padding-bottom: 5px !important;
+  padding-top: 5px !important;
+}
+
 .margin-auto {
   margin-left: auto !important;
   margin-right: auto !important;
@@ -256,8 +261,8 @@ button:hover {
 
 .profile-dropdown-link {
   border: solid;
-  border-radius: 20px;
-  padding: 10px;
+  border-radius: 3px;
+  padding: 5px;
 }
 
 .header a {
@@ -352,6 +357,20 @@ thead {
 
 .general-margin-large {
   margin: 20px;
+}
+
+.vertical-margin-small {
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.vertical-margin {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.margin-left-fix {
+  margin-left: 0.09em;
 }
 
 .casing {
@@ -526,6 +545,13 @@ thead {
 
 .edit-button{
   float: left;
+  width: 33%;
+  background-color: rgb(149, 183, 255);
+  border-bottom-left-radius: 10px;
+}
+
+.info-button{
+  float: left;
   width: 50%;
   background-color: rgb(149, 183, 255);
   border-bottom-left-radius: 10px;
@@ -533,9 +559,27 @@ thead {
 
 .delete-button {
   float: right;
+  width: 33%;
+  background-color: lightcoral;
+  border-bottom-right-radius: 10px;
+}
+
+.delete-service-button {
+  float: right;
   width: 50%;
   background-color: lightcoral;
   border-bottom-right-radius: 10px;
+}
+
+.select-button {
+  width: 33%;
+  background-color: rgb(106, 153, 255);
+}
+
+.select-service-button {
+  float: left;
+  width: 33%;
+  background-color: rgb(106, 153, 255);
 }
 
 .delete-button:hover {
@@ -544,6 +588,16 @@ thead {
 }
 
 .edit-button:hover {
+  cursor: pointer;
+  filter: brightness(0.95);
+}
+
+.select-button:hover {
+  cursor: pointer;
+  filter: brightness(0.95);
+}
+
+.select-service-button:hover {
   cursor: pointer;
   filter: brightness(0.95);
 }
@@ -634,10 +688,6 @@ thead {
   filter: opacity(0.7);
 }
 
-.serviceHeightCompensator {
-  line-height: 1.28em;
-}
-
 .hidden-with-value {
   opacity: 0;
   height:0;
@@ -663,6 +713,18 @@ thead {
 
 /* Deletion Confirmation Modal: */
 .delete-confirm-modal {
+  position: fixed; /* Stay in place */
+  z-index: 10; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0, 0, 0, 0.466); /* Fallback color */
+}
+
+/* Deletion Confirmation Modal: */
+.restore-confirm-modal {
   position: fixed; /* Stay in place */
   z-index: 10; /* Sit on top */
   left: 0;
@@ -811,6 +873,10 @@ thead {
   flex-direction: row;
   padding: 5px;
   float: left; 
+}
+
+.hover:hover {
+  filter: brightness(0.9);
 }
 
 /* BOOTSTRAP MENU */
@@ -1142,5 +1208,12 @@ div {
 @media (max-width: 420px) {
   .card-divs {
     min-width: 150px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .unique-invoices.float-right {
+    float: left !important;
+    display: block;
   }
 }
