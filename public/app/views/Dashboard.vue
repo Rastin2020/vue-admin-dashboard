@@ -99,6 +99,7 @@
                             <label>Status: <span class="status">{{service.status}}</span></label>
                             <br>
                           </div>
+                          <div class="horizontal-margin">
                             <button class="small-screen-margins" v-if="service.status === 'Built' || 
                               service.status === 'Starting' || service.status === 'Failed' || 
                               service.status === 'Stopped' || service.status === 'Error' || 
@@ -110,14 +111,11 @@
                               Stop</button>
                             <button class="small-screen-margins" v-on:click="open_serv_snapshot_modal(service)">
                               Snapshot</button>
-                            <br><br><br>
-                            <button class="small-screen-margins" v-on:click="open_restore_confirm_modal(service._id)">Restore</button>
-                            <select class="restore-select" v-on:change="set_restore_snapshot_option">
-                              <option>Snapshots</option>
-                              <option v-for="(snapshot, index) in orgSnapshots" v-bind:value="snapshot._id" 
-                                :key="index">{{snapshot.tag}}</option>
-                            </select>
-                            <br><br><br>
+                          </div>
+                          <div class="general-margin">
+                            <button class="small-screen-margins full-width" v-on:click="open_restore_confirm_modal(service._id)">Restore</button>
+                          </div>
+                          <br><br><br><br>
                         </div>
                       </div>
                     </div>
@@ -351,7 +349,7 @@
                 type="search" class="search-bar" placeholder="Search:">
           </div>
 
-          <div class="background-area">
+          <div id="snapshot-area" class="background-area">
             <div class="casing">
               <div v-if="orgSnapshots.length === 0" class="center-align">No Snapshots Found Under This 
                 Organization.</div>
@@ -415,6 +413,13 @@
         <div class="main-container">
           <div class="modal-container">
             <h1>Confirm Restore</h1>
+            <br>
+            <p>Select a snapshot to restore: <p>
+            <select class="restore-select" name="snapshot-selection" v-on:change="set_restore_snapshot_option">
+              <option>Snapshots</option>
+              <option v-for="(snapshot, index) in orgSnapshots" v-bind:value="snapshot._id" 
+                :key="index">{{snapshot.tag}}</option>
+            </select>
             <br>
             <label for="delete_name">Type in the snapshot id to restore <span class="required">*<span></label>
             <br>

@@ -88,7 +88,7 @@
                 .catch(function (error) {
                   console.log("error: " + error);
 
-                  self.errorMessage = "Username or email already exists.";
+                  self.errorMessage = "There was an error on our end, please try again!";
                   self.successMessage = "";
                   self.loader = false;
 

@@ -369,6 +369,11 @@ thead {
   margin-bottom: 5px;
 }
 
+.horizontal-margin {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
 .margin-left-fix {
   margin-left: 0.09em;
 }

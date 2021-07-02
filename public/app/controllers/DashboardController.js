@@ -206,6 +206,7 @@
       },
 
       close_restore_confirm_modal: function() {
+        this.restoreSnapshotOption = "Snapshots";
         this.restoreConfirmId = "";
         this.restoreTagConfirmInput = "";
         this.confirmRestoreSuccessMessage = "";
@@ -704,6 +705,8 @@
               self.load_org_snapshots();
               self.snapshotErrorMessage = "";
               self.loader = false;
+              self.showServSnapshotModal = false;
+              document.getElementById('snapshot-area').scrollIntoView();
             } else {
               self.snapshotErrorMessage =  objectResult.body.message;
               self.snapshotSuccessMessage = "";

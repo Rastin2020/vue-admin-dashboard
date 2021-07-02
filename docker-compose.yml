@@ -4,11 +4,20 @@ services:
 
   webserver:
     container_name: saas-frontend-webserver-dev
-    image: nginx:1.19.8-alpine
+    image: encircle/nginx-static:latest
     ports:
       - '37.128.131.22:80:80'
       - '37.128.131.22:443:443'
     volumes:
       - ./logs/nginx/:/var/log/nginx
-      - ./public:/usr/share/nginx/html
+      - ./public:/var/www/html
+      - ./certs:/etc/nginx/certs
+    environment:
+      ENV: ${ENV}
+      IP_WHITELIST_1: ${IP_WHITELIST_1}
+      IP_WHITELIST_2: ${IP_WHITELIST_2}
+      SITE: ${SITE}
+      HTPASS: ${HTPASS}
+      MODSEC_ENGINE_MODE: ${MODSEC_ENGINE_MODE}
+      DISABLE_CONF: ${DISABLE_CONF}
     restart: unless-stopped
