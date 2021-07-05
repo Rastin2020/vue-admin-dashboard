@@ -1,3 +1,5 @@
 logs/
 certs/
+letsencrypt/
+scripts/
 .env
