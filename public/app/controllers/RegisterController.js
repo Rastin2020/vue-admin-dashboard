@@ -75,20 +75,17 @@
                 ).then(function (result) {
 
                   const objectResult = JSON.parse(result.request.response);
-                  console.log(objectResult);
+                  console.log(objectResult.code);
                   console.log(result.status);
 
                   self.successMessage = "Registration successful.";
                   self.errorMessage = "";
                   self.loader = false;
                   
-                  window.location.href = "/#/login";
-
                 })
                 .catch(function (error) {
-                  console.log("error: " + error);
 
-                  self.errorMessage = "There was an error on our end, please try again!";
+                  self.errorMessage = error.response.data.message;
                   self.successMessage = "";
                   self.loader = false;
 

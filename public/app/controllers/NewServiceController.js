@@ -52,16 +52,13 @@
   
           const objectResult = JSON.parse(result.request.response);
           self.organizationArray = objectResult.body;
-          console.log(result.status);
-
           self.loader = false;
   
         })
         .catch(function (error) {
 
           console.log(error);
-          self.errorMessage = "An error occured on this page. Please refresh and try again";
-
+          self.errorMessage = "There was an error on our end, please try again!";
           self.loader = false;
 
         });
