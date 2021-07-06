@@ -17,6 +17,7 @@
         showDeleteConfirmModal: false,
         showServDetailsModal: false,
         showRestoreConfirmModal: false,
+        showScanModal: false,
         organizationsArray: [],
         confirmDeleteErrorMessage: "",
         confirmDeleteSuccessMessage: "",
@@ -34,9 +35,11 @@
         showOrganizations: true,
         organisationToggleText: "Hide Organizations",
         serviceArray: [],
+        serviceScansArray: [],
         showServices: true,
         serviceToggleText: "Hide Services",
         selectedOrganisationID: "",
+        scanServiceId: "",
         servSearchTerm: "",
         servSnapshotID: "",
         snapshotName: "",
@@ -77,7 +80,6 @@
         serviceBasicAuthPassword: "",
         serviceBasicAuthUsername: "",
         serviceDatabaseStorage: "",
-        serviceSqlDatabaseHost: "",
         serviceSqlDatabaseName: "",
         serviceSqlDatabasePass: "",
         serviceSqlDatabaseUser: "",
@@ -149,7 +151,6 @@
         this.serviceBasicAuthPassword = service.variables.basicauth_password;
         this.serviceBasicAuthUsername = service.variables.basicauth_username;
         this.serviceDatabaseStorage = service.variables.database_storage;
-        this.serviceSqlDatabaseHost = service.variables.mysql_db_host;
         this.serviceSqlDatabaseName = service.variables.mysql_db_name;
         this.serviceSqlDatabasePass = service.variables.mysql_db_pass;
         this.serviceSqlDatabaseUser = service.variables.mysql_db_user;
@@ -182,7 +183,6 @@
         this.serviceBasicAuthPassword = "";
         this.serviceBasicAuthUsername = "";
         this.serviceDatabaseStorage = "";
-        this.serviceSqlDatabaseHost = "";
         this.serviceSqlDatabaseName = "";
         this.serviceSqlDatabasePass = "";
         this.serviceSqlDatabaseUser = "";
@@ -212,6 +212,17 @@
         this.confirmRestoreSuccessMessage = "";
         this.confirmRestoreErrorMessage = "";
         this.showRestoreConfirmModal = false;
+      },
+
+      open_scan_modal: function(serviceID) {
+        this.scanServiceId = serviceID;
+        this.load_service_scans(this.scanServiceId);
+        this.showScanModal = true;
+      },
+
+      close_scan_modal: function() {
+        this.scanServiceId = "";
+        this.showScanModal = false;
       },
 
       submit_delete_confirm: function() {
@@ -269,7 +280,7 @@
           self.loader = true;
         }
   
-        axios.get("https://saas-api-dev.encircle.technology/wp-json/saas-wp/v1/organizations", 
+        axios.get(baseApiUrl + "/wp-json/saas-wp/v1/organizations", 
           {
             headers:  {
               "Content-Type": "application/json",
@@ -339,7 +350,7 @@
   
         const organisationID = this.selectedOrganisationID;
   
-        axios.get("https://saas-api-dev.encircle.technology/wp-json/saas-wp/v1/services?organization=" + organisationID,
+        axios.get(baseApiUrl + "/wp-json/saas-wp/v1/services?organization=" + organisationID,
           {
             headers:  {
               "Content-Type": "application/json",
@@ -428,7 +439,7 @@
             self.loader = true;
           }
 
-          axios.get("https://saas-api-dev.encircle.technology/wp-json/saas-wp/v1/snapshots",
+          axios.get(baseApiUrl + "/wp-json/saas-wp/v1/snapshots",
             {
               headers:  {
                 "Content-Type": "application/json",
@@ -500,6 +511,40 @@
 
       },
 
+      load_service_scans: function() {
+
+        let authToken;
+        let self = this;
+        if ( sessionStorage.getItem("token") !== null ) {
+          authToken = sessionStorage.getItem("token");
+        }
+  
+        if ( localStorage.getItem("token") !== null ) {
+          authToken = localStorage.getItem("token");
+        }
+
+        const serviceID = this.scanServiceId;
+  
+        axios.get(baseApiUrl + "/wp-json/saas-wp/v1/scans?service=" + serviceID, 
+          {
+            headers:  {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + authToken,
+            }
+          }
+        ).then(function (result) {
+          console.log(result.data.body);
+          self.serviceScansArray = result.data.body;
+          // self.loader = false;
+  
+        })
+        .catch(function (error) {
+          console.log(error.response);
+          // self.loader = false;
+        });
+
+      },
+
       service_toggle: function() {
 
         if ( this.showServices ) {
@@ -551,7 +596,7 @@
 
         if ( action === "restore" && this.restoreSnapshotOption !== "Snapshots" ) {
 
-          axios.post("https://saas-api-dev.encircle.technology/wp-json/saas-wp/v1/service/action", {}, 
+          axios.post(baseApiUrl + "/wp-json/saas-wp/v1/service/action", {}, 
           {
             headers:  {
               "Content-Type": "application/json",
@@ -574,7 +619,7 @@
 
         } else {
 
-          axios.post("https://saas-api-dev.encircle.technology/wp-json/saas-wp/v1/service/action", {}, 
+          axios.post(baseApiUrl + "/wp-json/saas-wp/v1/service/action", {}, 
           {
             headers:  {
               "Content-Type": "application/json",
@@ -616,7 +661,7 @@
 
         self.serviceDeleteErrorMessage = "";
     
-        axios.delete("https://saas-api-dev.encircle.technology/wp-json/saas-wp/v1/service?id=" + serviceID,
+        axios.delete(baseApiUrl + "/wp-json/saas-wp/v1/service?id=" + serviceID,
           {
             headers:  {
               "Content-Type": "application/json",
@@ -676,7 +721,7 @@
 
           self.loader = true;
           
-          axios.post("https://saas-api-dev.encircle.technology/wp-json/saas-wp/v1/snapshot", {}, 
+          axios.post(baseApiUrl + "/wp-json/saas-wp/v1/snapshot", {}, 
             {
               headers:  {
                 "Content-Type": "application/json",
@@ -737,7 +782,7 @@
           authToken = localStorage.getItem("token");
         }
     
-        axios.delete("https://saas-api-dev.encircle.technology/wp-json/saas-wp/v1/snapshot?id=",
+        axios.delete(baseApiUrl + "/wp-json/saas-wp/v1/snapshot?id=",
           {
             headers:  {
               "Content-Type": "application/json",
@@ -780,7 +825,7 @@
           authToken = localStorage.getItem("token");
         }
   
-        axios.get("https://saas-api-dev.encircle.technology/wp-json/saas-wp/v1/billing/plans", 
+        axios.get(baseApiUrl + "/wp-json/saas-wp/v1/billing/plans", 
           {
             headers:  {
               "Content-Type": "application/json",
@@ -809,7 +854,7 @@
           authToken = localStorage.getItem("token");
         }
   
-        axios.get("https://saas-api-dev.encircle.technology/wp-json/saas-wp/v1/user/plan", 
+        axios.get(baseApiUrl + "/wp-json/saas-wp/v1/user/plan", 
           {
             headers:  {
               "Content-Type": "application/json",
@@ -842,7 +887,7 @@
           authToken = localStorage.getItem("token");
         }
 
-        axios.get("https://saas-api-dev.encircle.technology/wp-json/saas-wp/v1/billing/config",
+        axios.get(baseApiUrl + "/wp-json/saas-wp/v1/billing/config",
           {
             headers:  {
               "Content-Type": "application/json",
@@ -879,7 +924,7 @@
 
           const stripe = Stripe(this.billingConfigKey);
 
-          axios.post("https://saas-api-dev.encircle.technology/wp-json/saas-wp/v1/billing/upgrade", {}, 
+          axios.post(baseApiUrl + "/wp-json/saas-wp/v1/billing/upgrade", {}, 
             {
               headers:  {
                 "Content-Type": "application/json",

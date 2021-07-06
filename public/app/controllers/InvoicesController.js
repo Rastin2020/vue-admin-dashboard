@@ -29,7 +29,7 @@
   
         self.loader = true;
   
-        axios.get("https://saas-api-dev.encircle.technology/wp-json/saas-wp/v1/billing/invoices", 
+        axios.get(baseApiUrl + "/wp-json/saas-wp/v1/billing/invoices", 
           {
             headers:  {
               "Content-Type": "application/json",

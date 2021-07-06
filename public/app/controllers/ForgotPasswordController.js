@@ -41,7 +41,7 @@
 
           self.loader = true; 
 
-          axios.post("https://saas-api-dev.encircle.technology/wp-json/wp/v2/users/lost-password", 
+          axios.post(baseApiUrl + "/wp-json/wp/v2/users/lost-password", 
             {
               user_login,
             }

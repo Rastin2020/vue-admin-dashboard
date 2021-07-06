@@ -45,7 +45,7 @@
 
             self.loader = true;
   
-            axios.post("https://saas-api-dev.encircle.technology/wp-json/jwt-auth/v1/token", 
+            axios.post(baseApiUrl + "/wp-json/jwt-auth/v1/token", 
               {
                 username,
                 password

@@ -51,7 +51,7 @@
           self.loader = true;
         }
   
-        axios.get("https://saas-api-dev.encircle.technology/wp-json/saas-wp/v1/organizations", 
+        axios.get(baseApiUrl + "/wp-json/saas-wp/v1/organizations", 
           {
             headers:  {
               "Content-Type": "application/json",
@@ -155,7 +155,7 @@
 
             self.loader = true;
             
-            axios.put("https://saas-api-dev.encircle.technology/wp-json/saas-wp/v1/organization", 
+            axios.put(baseApiUrl + "/wp-json/saas-wp/v1/organization", 
               {
                 name,
                 members: membersArrayProcessed
@@ -259,7 +259,7 @@
 
         self.orgDeleteErrorMessage = "";
         
-        axios.delete("https://saas-api-dev.encircle.technology/wp-json/saas-wp/v1/organization?id=" + organizationID, 
+        axios.delete(baseApiUrl + "/wp-json/saas-wp/v1/organization?id=" + organizationID, 
           {
             headers:  {
               "Content-Type": "application/json",

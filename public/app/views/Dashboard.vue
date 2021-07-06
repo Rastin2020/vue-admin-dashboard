@@ -113,7 +113,11 @@
                               Snapshot</button>
                           </div>
                           <div class="general-margin">
-                            <button class="small-screen-margins full-width" v-on:click="open_restore_confirm_modal(service._id)">Restore</button>
+                            <button class="small-screen-margins full-width" v-on:click="open_restore_confirm_modal(service._id)">
+                              Restore</button>
+                            <br><br><br>
+                            <button class="small-screen-margins full-width cancel-button" 
+                              v-on:click="open_scan_modal(service._id)">Scan</button>
                           </div>
                           <br><br><br><br>
                         </div>
@@ -243,12 +247,7 @@
                         <div class="col-sm">
                           <p>SQL_Database Name: {{serviceSqlDatabaseName}}</p>
                         </div>
-                        <div class="col-sm">
-                          <p>SQL_Database Host: {{serviceSqlDatabaseHost}} </p>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-sm">
+                         <div class="col-sm">
                           <p>Web Root Storage: {{serviceWebrootStorage}} </p>
                         </div>
                       </div>
@@ -314,6 +313,32 @@
                     <br>
                     <button v-on:click="close_serv_details_modal" class="close-edit-modal cancel-button">
                       CLOSE</button>
+                  </div>
+                </div>                  
+              </div>
+            </div>
+
+            <div class="scan-modal" v-if="showScanModal">
+              <div class="modal-content">
+                <div class="main-container">
+                  <div class="modal-container">
+                    <h1>Scan Service</h1>
+                    <hr>
+                    <div class="container">
+                      <div class="row">
+                        <div class="col-sm">
+                          <p>some detail</p>
+                        </div>
+                        <div class="col-sm">
+                          <p>some detail</p>
+                        </div>
+                      </div>
+                    </div>
+                    <br>
+                    <button v-on:click="close_scan_modal" class="close-edit-modal cancel-button">
+                      CLOSE</button>
+                    <button v-on:click="submit_scan" class="edit-modal-submit float-right">
+                      SCAN</button>
                   </div>
                 </div>                  
               </div>

@@ -213,7 +213,7 @@ module.exports = {
 
       self.orgDeleteErrorMessage = "";
       
-      axios.delete("https://saas-api-dev.encircle.technology/wp-json/saas-wp/v1/organization?id=" + organizationID, 
+      axios.delete(baseApiUrl + "/wp-json/saas-wp/v1/organization?id=" + organizationID, 
         {
           headers:  {
             "Content-Type": "application/json",
@@ -350,7 +350,7 @@ module.exports = {
 
           self.loader = true;
           
-          axios.put("https://saas-api-dev.encircle.technology/wp-json/saas-wp/v1/organization", 
+          axios.put(baseApiUrl + "/wp-json/saas-wp/v1/organization", 
             {
               name,
               members: membersArrayProcessed
@@ -410,7 +410,7 @@ module.exports = {
         self.loader = true;
       }
 
-      axios.get("https://saas-api-dev.encircle.technology/wp-json/saas-wp/v1/organizations", 
+      axios.get(baseApiUrl + "/wp-json/saas-wp/v1/organizations", 
         {
           headers:  {
             "Content-Type": "application/json",
@@ -488,7 +488,7 @@ module.exports = {
           authToken = localStorage.getItem("token");
         }
   
-        axios.get("https://saas-api-dev.encircle.technology/wp-json/saas-wp/v1/user/plan", 
+        axios.get(baseApiUrl + "/wp-json/saas-wp/v1/user/plan", 
           {
             headers:  {
               "Content-Type": "application/json",

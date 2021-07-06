@@ -76,7 +76,7 @@
   
             self.loader = true;
 
-            axios.post("https://saas-api-dev.encircle.technology/wp-json/saas-wp/v1/organization", 
+            axios.post(baseApiUrl + "/wp-json/saas-wp/v1/organization", 
               {
                 name,
                 members: membersArrayProcessed
