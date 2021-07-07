@@ -23,6 +23,8 @@
         confirmDeleteSuccessMessage: "",
         confirmRestoreSuccessMessage: "",
         confirmRestoreErrorMessage: "",
+        scanErrorMessage: "",
+        scanSuccessMessage: "",
         whichDeleteModal: "",
         deleteConfirmId: "",
         restoreConfirmId: "",
@@ -221,8 +223,109 @@
       },
 
       close_scan_modal: function() {
+        this.scanErrorMessage = "";
+        this.scanSuccessMessage = "",
         this.scanServiceId = "";
         this.showScanModal = false;
+      },
+
+      submit_scan: function(type) {
+
+        let authToken;
+        let self = this;
+        if ( sessionStorage.getItem("token") !== null ) {
+          authToken = sessionStorage.getItem("token");
+        }
+  
+        if ( localStorage.getItem("token") !== null ) {
+          authToken = localStorage.getItem("token");
+        }
+
+        self.scanSuccessMessage = "";
+        self.scanErrorMessage = "";
+
+        if ( type === "single" ) {
+
+          this.loader = true;
+
+          axios.post(baseApiUrl + "/wp-json/saas-wp/v1/scan?service=" + this.scanServiceId, {},
+          {
+            headers:  {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + authToken,
+            } 
+          }
+          ).then(function (result) {
+            console.log(result);
+            
+            const responseCode = result.data.response.code;
+            const responseMessage = result.data.body.message;
+
+            if ( responseCode === 200 ) {
+
+              self.scanSuccessMessage = "Scan Successfull.";
+              self.scanErrorMessage = "";
+              self.loader = false;
+
+            } else {
+
+              self.scanSuccessMessage = "";
+              self.scanErrorMessage = responseMessage;
+              self.loader = false;
+
+            }
+            
+          })
+          .catch(function (error) {
+
+            console.log(error);
+            self.scanErrorMessage = error.response;
+            self.scanSuccessMessage = "";
+            self.loader = false;
+
+          });
+
+        } else {
+
+          axios.post(baseApiUrl + "/wp-json/saas-wp/v1/scan", {},
+          {
+            headers:  {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + authToken,
+            } 
+          }
+          ).then(function (result) {
+
+            const responseCode = result.data.response.code;
+            const responseMessage = result.data.body.message;
+
+            if ( responseCode === 200 ) {
+
+              self.scanSuccessMessage = "Scan Successfull.";
+              self.scanErrorMessage = "";
+              self.loader = false;
+
+            } else {
+
+              self.scanSuccessMessage = "";
+              self.scanErrorMessage = responseMessage;
+              self.loader = false;
+
+            }
+            
+          })
+          .catch(function (error) {
+
+            console.log(error.response);
+            self.scanErrorMessage = error.response;
+            self.scanSuccessMessage = "";
+            self.loader = false;
+
+          });
+
+        }
+
+
       },
 
       submit_delete_confirm: function() {
@@ -363,7 +466,6 @@
 
           if ( servSearchTerm === "" || servSearchTerm === undefined || typeof servSearchTerm === "object" ) {
               const possibleEmptyMessage = JSON.stringify(serviceArray);
-              console.log(possibleEmptyMessage);
 
             if ( possibleEmptyMessage === '{"message":"No such organization"}' ) {
 
@@ -411,8 +513,7 @@
 
         })
         .catch(function (error) {
-          console.log(error);
-          console.log("An error occured on this page. Please refresh and try again");
+          console.log(error.response);
           self.servInitialRendering = false;
           self.loader = false;
         });
@@ -451,7 +552,6 @@
             }
           ).then(function (result) {
             const objectResult = JSON.parse(result.request.response);
-            console.log("snapshots: " + JSON.stringify(objectResult));
 
             for (i=0; i<objectResult.body.length; i++) {
               snapshotArray.push(
@@ -524,6 +624,7 @@
         }
 
         const serviceID = this.scanServiceId;
+        this.loader = true;
   
         axios.get(baseApiUrl + "/wp-json/saas-wp/v1/scans?service=" + serviceID, 
           {
@@ -535,12 +636,12 @@
         ).then(function (result) {
           console.log(result.data.body);
           self.serviceScansArray = result.data.body;
-          // self.loader = false;
+          self.loader = false;
   
         })
         .catch(function (error) {
           console.log(error.response);
-          // self.loader = false;
+          self.loader = false;
         });
 
       },
@@ -577,6 +678,15 @@
 
       },
 
+      select_org_default: function(orgID) {
+        sessionStorage.setItem("orgID", orgID);
+       if ( this.$route.fullPath === "/dashboard" ) {
+          location.reload();
+        } else {
+          window.location.href = "/#/dashboard";
+        };
+      },
+
       action_service: function(serviceID, action) {
 
         let authToken;
@@ -610,7 +720,6 @@
           }
         ).then(function (result) {
           const objectResult = JSON.parse(result.request.response);
-          console.log(objectResult);
           self.load_user_service_details();
         })
         .catch(function (error) {
@@ -632,7 +741,6 @@
           }
           ).then(function (result) {
             const objectResult = JSON.parse(result.request.response);
-            console.log(objectResult);
             self.load_user_service_details();
           })
           .catch(function (error) {
@@ -734,7 +842,6 @@
             }
           ).then(function (result) {
             const objectResult = JSON.parse(result.request.response);
-            console.log(objectResult);
 
             if ( objectResult.body.message === "Service must be running to snapshot" ) {
               self.snapshotErrorMessage = "Service must be running to snapshot.";
@@ -794,7 +901,6 @@
           }
         ).then(function (result) {
           const objectResult = JSON.parse(result.request.response);
-          console.log(objectResult);
           self.load_org_snapshots();
         })
         .catch(function (error) {
@@ -976,7 +1082,6 @@
       copyToClipboard: function(id) {
 
         const textToCopy = document.getElementById(id);
-        console.log(textToCopy);
 
         /* Select the text field */
         textToCopy.select();
