@@ -61,11 +61,6 @@
         orgInitialRendering: true,
         servInitialRendering: true,
         snapshotInitialRendering: true,
-        currentPlan: "",
-        planSelection: "Select a Plan",
-        availablePlans: [],
-        billingConfigKey: "",
-        planError: "",
         updatePlan: false,
         serviceApplication: "",
         serviceDomain: "",
@@ -218,7 +213,7 @@
 
       open_scan_modal: function(serviceID) {
         this.scanServiceId = serviceID;
-        this.load_service_scans(this.scanServiceId);
+        this.load_service_scans("initial");
         this.showScanModal = true;
       },
 
@@ -229,7 +224,7 @@
         this.showScanModal = false;
       },
 
-      submit_scan: function(type) {
+      submit_scan: function() {
 
         let authToken;
         let self = this;
@@ -244,87 +239,44 @@
         self.scanSuccessMessage = "";
         self.scanErrorMessage = "";
 
-        if ( type === "single" ) {
+        this.loader = true;
 
-          this.loader = true;
-
-          axios.post(baseApiUrl + "/wp-json/saas-wp/v1/scan?service=" + this.scanServiceId, {},
-          {
-            headers:  {
-              "Content-Type": "application/json",
-              "Authorization": "Bearer " + authToken,
-            } 
-          }
-          ).then(function (result) {
-            console.log(result);
-            
-            const responseCode = result.data.response.code;
-            const responseMessage = result.data.body.message;
-
-            if ( responseCode === 200 ) {
-
-              self.scanSuccessMessage = "Scan Successfull.";
-              self.scanErrorMessage = "";
-              self.loader = false;
-
-            } else {
-
-              self.scanSuccessMessage = "";
-              self.scanErrorMessage = responseMessage;
-              self.loader = false;
-
-            }
-            
-          })
-          .catch(function (error) {
-
-            console.log(error);
-            self.scanErrorMessage = error.response;
-            self.scanSuccessMessage = "";
-            self.loader = false;
-
-          });
-
-        } else {
-
-          axios.post(baseApiUrl + "/wp-json/saas-wp/v1/scan", {},
-          {
-            headers:  {
-              "Content-Type": "application/json",
-              "Authorization": "Bearer " + authToken,
-            } 
-          }
-          ).then(function (result) {
-
-            const responseCode = result.data.response.code;
-            const responseMessage = result.data.body.message;
-
-            if ( responseCode === 200 ) {
-
-              self.scanSuccessMessage = "Scan Successfull.";
-              self.scanErrorMessage = "";
-              self.loader = false;
-
-            } else {
-
-              self.scanSuccessMessage = "";
-              self.scanErrorMessage = responseMessage;
-              self.loader = false;
-
-            }
-            
-          })
-          .catch(function (error) {
-
-            console.log(error.response);
-            self.scanErrorMessage = error.response;
-            self.scanSuccessMessage = "";
-            self.loader = false;
-
-          });
-
+        axios.post(baseApiUrl + "/wp-json/saas-wp/v1/scan?service=" + this.scanServiceId, {},
+        {
+          headers:  {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + authToken,
+          } 
         }
+        ).then(function (result) {
+          console.log(result);
+          
+          const responseCode = result.data.response.code;
+          const responseMessage = result.data.body.message;
 
+          if ( responseCode === 200 ) {
+
+            self.scanSuccessMessage = "Scan initiated. Once ready it will be loaded into the bottom of the list below.";
+            self.scanErrorMessage = "";
+            self.loader = false;
+
+          } else {
+
+            self.scanSuccessMessage = "";
+            self.scanErrorMessage = responseMessage;
+            self.loader = false;
+
+          }
+          
+        })
+        .catch(function (error) {
+
+          console.log(error);
+          self.scanErrorMessage = error.response;
+          self.scanSuccessMessage = "";
+          self.loader = false;
+
+        });
 
       },
 
@@ -611,7 +563,7 @@
 
       },
 
-      load_service_scans: function() {
+      load_service_scans: function(status) {
 
         let authToken;
         let self = this;
@@ -624,7 +576,9 @@
         }
 
         const serviceID = this.scanServiceId;
-        this.loader = true;
+        if( status === "initial" ) {
+          this.loader = true;
+        }
   
         axios.get(baseApiUrl + "/wp-json/saas-wp/v1/scans?service=" + serviceID, 
           {
@@ -637,7 +591,6 @@
           console.log(result.data.body);
           self.serviceScansArray = result.data.body;
           self.loader = false;
-  
         })
         .catch(function (error) {
           console.log(error.response);
@@ -741,6 +694,7 @@
           }
           ).then(function (result) {
             const objectResult = JSON.parse(result.request.response);
+            console.log(objectResult);
             self.load_user_service_details();
           })
           .catch(function (error) {
@@ -914,161 +868,10 @@
         let self = this;
         self.setInterval_ID = setInterval(function () { 
           self.load_user_organisation_details();
-          self.load_user_service_details(self.servSearchTerm)
-          self.load_org_snapshots(self.snapshotSearchTerm)
+          self.load_user_service_details(self.servSearchTerm);
+          self.load_org_snapshots(self.snapshotSearchTerm);
+          self.load_service_scans();
         }, 3000);
-      },
-
-      get_available_plans: function() {
-
-        let authToken;
-        let self = this;
-        if ( sessionStorage.getItem("token") !== null ) {
-          authToken = sessionStorage.getItem("token");
-        }
-  
-        if ( localStorage.getItem("token") !== null ) {
-          authToken = localStorage.getItem("token");
-        }
-  
-        axios.get(baseApiUrl + "/wp-json/saas-wp/v1/billing/plans", 
-          {
-            headers:  {
-              "Content-Type": "application/json",
-              "Authorization": "Bearer " + authToken,
-            } 
-          }
-        ).then(function (result) {
-          const objectResult = JSON.parse(result.request.response);
-          self.availablePlans = objectResult.body.plans;
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-
-      },
-
-      get_current_plan: function() {
-
-        let authToken;
-        let self = this;
-        if ( sessionStorage.getItem("token") !== null ) {
-          authToken = sessionStorage.getItem("token");
-        }
-  
-        if ( localStorage.getItem("token") !== null ) {
-          authToken = localStorage.getItem("token");
-        }
-  
-        axios.get(baseApiUrl + "/wp-json/saas-wp/v1/user/plan", 
-          {
-            headers:  {
-              "Content-Type": "application/json",
-              "Authorization": "Bearer " + authToken,
-            } 
-          }
-        ).then(function (result) {
-
-          const objectResult = JSON.parse(result.request.response);
-          self.currentPlan = objectResult.body.plan;
-
-        })
-        .catch(function (error) {
-
-          console.log(error);
-
-        });
-
-      },
-
-      config_billing: function() {
-
-        let authToken;
-        let self = this;
-        if ( sessionStorage.getItem("token") !== null ) {
-          authToken = sessionStorage.getItem("token");
-        }
-
-        if ( localStorage.getItem("token") !== null ) {
-          authToken = localStorage.getItem("token");
-        }
-
-        axios.get(baseApiUrl + "/wp-json/saas-wp/v1/billing/config",
-          {
-            headers:  {
-              "Content-Type": "application/json",
-              "Authorization": "Bearer " + authToken,
-            }
-          }
-        ).then(function (result) {
-          self.billingConfigKey = result.data.body.key;
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-
-      },
-
-      subscribe: function() {
-
-        let authToken;
-        let self = this;
-        if ( sessionStorage.getItem("token") !== null ) {
-          authToken = sessionStorage.getItem("token");
-        }
-
-        if ( localStorage.getItem("token") !== null ) {
-          authToken = localStorage.getItem("token");
-        }
-
-        if ( this.planSelection === "Select a Plan") {
-          
-          this.planError = "Please select a plan";
-          return;
-          
-        } else {
-
-          const stripe = Stripe(this.billingConfigKey);
-
-          axios.post(baseApiUrl + "/wp-json/saas-wp/v1/billing/upgrade", {}, 
-            {
-              headers:  {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + authToken,
-              },
-              params: {
-                plan: this.planSelection
-              }
-            }
-          ).then(function (result) {
-            const resultJSON = JSON.parse(JSON.stringify(result));
-            const sessionId = resultJSON.data.body.sessionId;
-            const message = resultJSON.data.body.message;
-            self.planError = message;
-            stripe.redirectToCheckout({sessionId});
-            self.get_current_plan();
-
-            if ( !self.updatePlan ) {
-              self.updatePlan = true;
-            } else {
-              self.updatePlan = false;
-            }
-
-          })
-          .catch(function (error) {
-            self.get_current_plan();
-            
-            if ( !self.updatePlan ) {
-              self.updatePlan = true;
-            } else {
-              self.updatePlan = false;
-            }
-
-            console.log(error);
-          });
-
-        }
-        
       },
 
       scroll: function(refName) {
@@ -1124,9 +927,6 @@
       this.load_user_organisation_details();
       this.load_user_service_details();
       this.load_org_snapshots();
-      this.get_current_plan();
-      this.get_available_plans();
-      this.config_billing();
       this.re_render_arrays();
   
     },

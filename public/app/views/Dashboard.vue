@@ -10,32 +10,6 @@
           <div class="col-sm">
             <h2>Dashboard</h2>
           </div>
-          <div class="col-sm plan-area">
-            <label for="plan-select" class="main-card-color general-padding">{{currentPlan}} Plan</label>
-            <select name="plan-select" class="general-padding" v-model="planSelection">
-              <option>Select a Plan</option>
-              <option v-for="(details, plan, index) in availablePlans" v-bind:value="plan" 
-                :key="index">{{plan}}</option>
-            </select>
-            <button class="main-button general-margin no-vertical-padding" v-on:click="subscribe">Subscribe</button>
-            <br>
-            <div v-if="planError !=='' ">
-              {{planError}}
-            </div>
-            <br>
-          </div>
-        </div>
-      </div>
-
-      <div class="main-card container">
-        <div class="row general-margin">
-          <div class="col-sm">
-            <h2>Invoices</h2>
-          </div>
-          <div class="col-sm">
-            <a href="/#/invoices" class="main-button unique-invoices top-margin adjusted-vertical-padding 
-              float-right">See Your Invoices</a>
-          </div>
         </div>
       </div>
 
@@ -320,13 +294,13 @@
 
             <div class="scan-modal" v-if="showScanModal">
               <div class="modal-content">
-                <div class="main-container">
+                <div class="scans main-container">
                   <div class="modal-container">
                     <h1>Scan Service</h1>
                     <br>
                     <button v-on:click="close_scan_modal" class="close-edit-modal cancel-button">
                       CLOSE</button>
-                    <button v-on:click="submit_scan('single')" class="edit-modal-submit float-right">
+                    <button v-on:click="submit_scan" class="edit-modal-submit float-right">
                       SCAN</button>
                     <br><br>
                     <div v-if="scanErrorMessage !== ''" class="alerts-area">
@@ -335,7 +309,8 @@
                     <div v-if="scanSuccessMessage !== ''" class="success-area">
                       {{scanSuccessMessage}}
                     </div>
-
+                    <br>
+                    
                     <div v-if="serviceScansArray.length === 0" class="container">
                       <div class="row">
                         <div class="col-sm">
@@ -344,88 +319,72 @@
                       </div>
                     </div>
 
-                    <div v-else v-for="serviceScan in serviceScansArray" :key="serviceScan._id">
+                    <div v-else v-for="serviceScan in serviceScansArray" :key="serviceScan._id" class="main-card">
 
+                      <h2>* Scan Date: {{serviceScan.date}}</h2>
+                      
                       <hr>
                     
                       <div class="container">
 
-                        <div class="row">
+                        <div v-if="serviceScan.data.length === 0" class="row">
                           <div class="col-sm">
-                            <!-- <p>Service: {{serviceScan.service}}</p> -->
-                          </div>
-                          <div class="col-sm">
-                            <p>Scan Date: {{serviceScan.date}}</p>
+                            <p>No Vulnerabilities Found.</p>
                           </div>
                         </div>
 
-                        <div v-for="serviceScanData in serviceScan.data" class="row">
-                          <div class="col-sm">
-                            <p>Target: {{serviceScanData.Target}}</p>
-                          </div>
-                          <div class="col-sm">
-                            <p>Type: {{serviceScanData.Type}}</p>
+                        <div v-for="serviceScanData in serviceScan.data" class="vuns-card general-padding-large">
+                          <div class="row">
+                            <div class="col-sm">
+                              <p>Target: {{serviceScanData.Target}}</p>
+                            </div>
                           </div>
 
-                          <div v-for="serviceScanVuns in serviceScanData.Vulnerabilities" class="main-card">
+                          <div v-if="serviceScanData.Vulnerabilities === undefined" class="row">
+                            <div class="col-sm">
+                              <p>No Vulnerabilities Found.</p>
+                            </div>
+                          </div>
+
+                          <div v-else v-for="serviceScanVuns in serviceScanData.Vulnerabilities">
+                            
+                            <hr>
+
                             <div class="row">
                               <div class="col-sm">
-                                <p>Vulnerability Description: {{serviceScanVuns.Description}}</p>
+                                <p>Vulnerability ID <span class="input-hints-format">{{serviceScanVuns.VulnerabilityID}}
+                                  </span></p>
                               </div>
                               <div class="col-sm">
-                                <p>Vulnerability Last Modified Date: {{serviceScanVuns.LastModifiedDate}}</p>
+                                <p v-if="serviceScanVuns.Severity === 'HIGH'">Severity <span 
+                                class="input-hints-format severe-color"><b>{{serviceScanVuns.Severity}}</b></span></p>
+                                 <p v-if="serviceScanVuns.Severity === 'MEDIUM'">Severity <span 
+                                class="input-hints-format medium-color"><b>{{serviceScanVuns.Severity}}</b></span></p>
+                                 <p v-if="serviceScanVuns.Severity === 'LOW'">Severity <span 
+                                class="input-hints-format low-color"><b>{{serviceScanVuns.Severity}}</b></span></p>
+                              </div>
+                            </div>
+
+                            <div class="row">
+                              <div class="col-sm">
+                                <p><u>CVSS</u></p>
                               </div>
                             </div>
                             <div class="row">
                               <div class="col-sm">
-                                <p>Vulnerability CVSS: {{serviceScanVuns.CVSS}}</p>
+                                <p>Score <span class="input-hints-format">{{serviceScanVuns.CVSS.nvd.V3Score}}</span></p>
                               </div>
                               <div class="col-sm">
-                                <!-- <p>Vulnerability CweIDs: {{serviceScanVuns.CweIDs}}</p> -->
+                                <p>Package Name <span class="input-hints-format">{{serviceScanVuns.PkgName}}</span></p>
                               </div>
                             </div>
                             <div class="row">
-                              <div class="col-sm">
-                                <!-- <p>Vun Fixed Version: {{serviceScanVuns.FixedVersion}}</p> -->
-                              </div>
-                              <div class="col-sm">
-                                <!-- <p>Vun Installed Version: {{serviceScanVuns.InstalledVersion}}</p> -->
-                              </div>
-                            </div>
-                            <div class="row">
-                              <div class="col-sm">
-                                <!-- <p>Vun PkgName: {{serviceScanVuns.PkgName}}</p> -->
-                              </div>
-                              <div class="col-sm">
-                                <p>Vun PrimaryURL: {{serviceScanVuns.PrimaryURL}}</p>
-                              </div>
-                            </div>
-                            <div class="row">
-                              <div class="col-sm">
-                                <p>Vun PublishedDate: {{serviceScanVuns.PublishedDate}}</p>
-                              </div>
-                              <div class="col-sm">
-                                <!-- <p>Vun References: {{serviceScanVuns.References}}</p> -->
-                              </div>
-                            </div>
-                            <div class="row">
-                              <div class="col-sm">
-                                <p>Vun Severity: {{serviceScanVuns.Severity}}</p>
-                              </div>
-                              <div class="col-sm">
-                                <p>Vun SeveritySource: {{serviceScanVuns.SeveritySource}}</p>
-                              </div>
-                            </div>
-                            <div class="row">
-                              <div class="col-sm">
-                                <p>Vun Title: {{serviceScanVuns.Title}}</p>
-                              </div>
-                              <div class="col-sm">
-                                <p>Vun VulnerabilityID: {{serviceScanVuns.VulnerabilityID}}</p>
-                              </div>
+                               <p>Primary URL <a :href="serviceScanVuns.PrimaryURL" class="input-hints-format" 
+                                target="_blank">{{serviceScanVuns.PrimaryURL}}</a></p>
                             </div>
                           </div>
                         </div>
+                        <br>
 
                       </div>
 

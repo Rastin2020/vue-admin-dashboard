@@ -85,6 +85,14 @@ a:hover {
   margin-bottom: 10px;
 }
 
+.vuns-card {
+  background-color: rgb(255, 174, 174);
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
 .main-card-color {
   background-color: rgb(225, 242, 252);
 }
@@ -397,6 +405,10 @@ thead {
   padding: 10px;
 }
 
+.general-padding-large {
+  padding: 30px;
+}
+
 .plan-area label, select { 
   margin-right: 15px;
 }
@@ -553,6 +565,20 @@ thead {
   width: 33%;
   background-color: rgb(149, 183, 255);
   border-bottom-left-radius: 10px;
+}
+
+.dropdown-edit-button{
+  float: left;
+  width: 50%;
+  background-color: rgb(149, 183, 255);
+  border-bottom-left-radius: 10px;
+}
+
+.dropdown-select-button{
+  float: left;
+  width: 50%;
+  background-color: rgb(106, 153, 255);
+  border-bottom-right-radius: 10px;
 }
 
 .info-button{
@@ -843,6 +869,18 @@ thead {
   text-align: center;
   width: 100%;
   border-width: 1px;
+}
+
+.severe-color {
+  color: rgb(236, 14, 14);
+}
+
+.medium-color {
+  color: rgb(255, 215, 38);
+}
+
+.low-color {
+  color: rgb(157, 235, 12);
 }
 
 .org-page-indicator:hover {
@@ -1137,6 +1175,12 @@ div {
   .unique-restore.float-right {
     float: left !important;
     margin-top: 10px;
+  }
+}
+
+@media (max-width: 570px) {
+  .scans.main-container {
+    padding: 20px 3px;
   }
 }
 

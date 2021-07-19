@@ -32,7 +32,8 @@
     <script src="app/controllers/NewServiceController.js"></script>
     <script src="app/controllers/RegisterController.js"></script>
     <script src="app/controllers/OrganizationsController.js"></script>
-    <script src="app/controllers/InvoicesController.js"></script>
+    <script src="app/controllers/BillingController.js"></script>
+    <script src="app/controllers/NotFoundController.js"></script>
     <!-- BOOTSTRAP -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" 
     integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
@@ -63,7 +64,9 @@
         { path: '/new-service', component: httpVueLoader('app/views/NewService.vue') },
         { path: '/forgot-password', component: httpVueLoader('app/views/ForgotPassword.vue') },
         { path: '/organizations', component: httpVueLoader('app/views/Organizations.vue') },
-        { path: '/invoices', component:httpVueLoader('app/views/Invoices.vue') }
+        { path: '/billing', component: httpVueLoader('app/views/Billing.vue') },
+        { path: '/404', name: '404', component: httpVueLoader('app/views/NotFound.vue') },
+        { path: '*', redirect: { name: '404' } }
       ]
 
       const router = new VueRouter({

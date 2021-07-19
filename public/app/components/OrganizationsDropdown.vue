@@ -13,9 +13,8 @@
             <div class="mt-5">
               <a class="general-margin no-hover-pointer">{{userEmail}}</a>
               <br>
-              <a href="/#/invoices" class="profile-dropdown-link general-margin">Invoices</a>
+              <a href="/#/billing" class="profile-dropdown-link general-margin">Billing</a>
               <br>
-              <a href="/#/dashboard" class="profile-dropdown-link general-margin">{{currentPlan}} Plan</a>
             </div>
           </div>
         </div>
@@ -40,35 +39,21 @@
           <input v-on:keyup="load_user_organisation_details(orgSearchTerm)" v-model="orgSearchTerm" type="search" 
             class="search-bar" placeholder="Search:"> 
         </div>
-        <div v-if="orgDeleteErrorMessage !== ''" class="alerts-area left-spaced" ref="orgError">
-          {{orgDeleteErrorMessage}}
-        </div>
 
         <div v-for="(organisation, index) in organizationsArray" class="dropdown-card card-divs" :key="index">
           <div class='col-sm card center-align'>
           <div class="card p-3 mb-2">
               <div class="mt-5">
-                <p class="heading general-margin">{{organisation.name}}</p>
-              </div>
-              <br>
-              <div class="mt-5">
-                <select class="margin-auto">
-                  <option>Members</option>
-                  <option v-for="(member, index) in organisation.members" :key="index">{{member}}</option>
-                </select>
+                <h3 class="heading general-margin">{{organisation.name}}</h3>
               </div>
             </div>
-            <br><br><br>
+            <br><br>
             <div class="card-buttons no-left-space ">
-              <div class="edit-button" v-on:click="open_org_modal(organisation)">
+              <div class="dropdown-edit-button hover pointer" v-on:click="open_org_modal(organisation)">
                 <img class="general-margin-small" src="app/assets/icons/edit.png" width="17px" height="18px">
               </div>
-              <div class="select-button" v-on:click="select_org_default(organisation._id)">
+              <div class="dropdown-select-button hover pointer" v-on:click="select_org_default(organisation._id)">
                 <img class="vertical-margin-small" src="app/assets/icons/click.png" width="15px" height="20px">
-              </div>
-              <div class="delete-button" v-on:click="open_delete_confirm_modal(organisation.name, 'org', 
-                organisation._id)">
-                <img class="general-margin-small" src="app/assets/icons/delete.png" width="14px" height="18px">
               </div>
             </div>
           </div>
@@ -108,33 +93,6 @@
       </div>
     </div>
 
-    <div class="delete-confirm-modal" v-if="showDeleteConfirmModal">
-      <div class="modal-content">
-        <div class="main-container full-width">
-          <div class="modal-container left-spaced-middle">
-            <h1>Confirm Delete</h1>
-            <br>
-            <label for="delete_name">Type in the name to delete <span class="required">*<span></label>
-            <br>
-            <input v-on:keyup.enter="submit_delete_confirm(); scroll('error');" class="form-input full-width" 
-              type="text" name="delete_name" v-model="deleteNameConfirmInput">  
-            <br><br>
-            <p>Name: <span class="input-hints-format">{{this.deleteNameConfirm}}</span></p>
-            <div v-if="confirmDeleteErrorMessage !== ''" class="alerts-area">
-              {{confirmDeleteErrorMessage}}
-            </div>
-            <div v-if="confirmDeleteSuccessMessage !== ''" class="success-area">
-              {{confirmDeleteSuccessMessage}}
-            </div>
-            <br><br>
-            <button v-on:click="close_delete_confirm_modal" class="edit-modal-submit">CANCEL</button>
-            <button v-on:click="submit_delete_confirm" class="close-edit-modal cancel-button float-right">
-              DELETE</button>
-          </div>
-        </div>                  
-      </div>
-    </div>
-
     <div class="loading-modal center-align" v-if="loader">
       <div class="modal-content">
         <div class="spinning-loader"></div>
@@ -167,17 +125,10 @@ module.exports = {
       editMembers: [],
       orgErrorMessage: "",
       orgSuccessMessage: "",
-      orgDeleteErrorMessage: "",
-      showDeleteConfirmModal: false,
-      deleteNameConfirmInput: "",
-      deleteNameConfirm: "",
-      confirmDeleteErrorMessage: "",
-      confirmDeleteSuccessMessage: "",
       editOrganizationID: "",
       whichDeleteModal: "",
       deleteConfirmId: "",
       orgInitialRendering: true,
-      currentPlan: "",
       userEmail: ""
     }
   },
@@ -194,56 +145,6 @@ module.exports = {
 
     },
 
-    delete_organization: function(organisationID) {
-
-      let self = this;
-
-      let authToken;
-      if ( sessionStorage.getItem("token") !== null ) {
-        authToken = sessionStorage.getItem("token");
-      }
-
-      if ( localStorage.getItem("token") !== null ) {
-        authToken = localStorage.getItem("token");
-      }
-
-      const organizationID = organisationID;
-      
-      self.loader = true;
-
-      self.orgDeleteErrorMessage = "";
-      
-      axios.delete(baseApiUrl + "/wp-json/saas-wp/v1/organization?id=" + organizationID, 
-        {
-          headers:  {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + authToken,
-          }
-        }
-      ).then(function (result) {
-        
-        console.log(result.request.response);
-        console.log(result.status);
-        const objectResult = JSON.parse(result.request.response);
-
-        if ( objectResult.response.message === "Conflict" ) {
-          self.orgDeleteErrorMessage = "Organization has to be empty of service to delete.";
-          self.loader = false;
-        } else {
-          self.load_user_organisation_details();
-          self.orgDeleteErrorMessage = "";
-          self.loader = false;
-        }
-
-      })
-      .catch(function (error) {
-        console.log(error);
-        self.orgDeleteErrorMessage = "There was an error on our end, please try again!";
-        self.loader = false;
-      });
-
-    },
-
     open_org_modal: function(organisation) {
 
       this.showOrgEditModal = true;
@@ -257,41 +158,6 @@ module.exports = {
       this.orgErrorMessage = "";
       this.orgSuccessMessage = "";
       this.showOrgEditModal = false;
-    },
-
-    open_delete_confirm_modal: function(name, whichDeleteModal, ID) {
-      this.deleteNameConfirm = name;
-      this.whichDeleteModal = whichDeleteModal;
-      this.deleteConfirmId = ID;
-      this.showDeleteConfirmModal = true;
-    },
-
-    close_delete_confirm_modal: function() {
-      this.deleteNameConfirm = "";
-      this.whichDeleteModal = "";
-      this.deleteConfirmId = "";
-      this.deleteNameConfirmInput = "";
-      this.confirmDeleteErrorMessage = "";
-      this.confirmDeleteSuccessMessage = "";
-      this.showDeleteConfirmModal = false;
-    },
-
-    submit_delete_confirm: function() {
-
-      if ( this.deleteNameConfirmInput !== this.deleteNameConfirm ) {
-        this.confirmDeleteErrorMessage = "Incorrect. Please try again.";
-        this.confirmDeleteSuccessMessage = "";
-        return;
-      }
-
-      if ( this.whichDeleteModal === "org" ) {
-        this.delete_organization(this.deleteConfirmId);
-      }
-
-      this.confirmDeleteErrorMessage = "";
-      this.confirmDeleteSuccessMessage = "Deleted";
-      this.close_delete_confirm_modal();
-
     },
 
     submit_org_edit: function() {
@@ -474,46 +340,12 @@ module.exports = {
       } else {
         window.location.href = "/#/dashboard";
       };
-    },
-
-    get_current_plan: function() {
-
-        let authToken;
-        let self = this;
-        if ( sessionStorage.getItem("token") !== null ) {
-          authToken = sessionStorage.getItem("token");
-        }
-  
-        if ( localStorage.getItem("token") !== null ) {
-          authToken = localStorage.getItem("token");
-        }
-  
-        axios.get(baseApiUrl + "/wp-json/saas-wp/v1/user/plan", 
-          {
-            headers:  {
-              "Content-Type": "application/json",
-              "Authorization": "Bearer " + authToken,
-            } 
-          }
-        ).then(function (result) {
-
-          const objectResult = JSON.parse(result.request.response);
-          self.currentPlan = objectResult.body.plan;
-
-        })
-        .catch(function (error) {
-
-          console.log(error);
-
-        });
-
     }
 
   },
 
   mounted() {
     this.load_user_organisation_details();
-    this.get_current_plan();
     
     if ( sessionStorage.getItem("email") !== null) {
       this.userEmail = sessionStorage.getItem("email");
