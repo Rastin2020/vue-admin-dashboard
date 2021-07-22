@@ -115,15 +115,6 @@
   
     },
 
-    mounted() {
-
-       // Redirect to login page if user isn't logged in (i.e token can't be found in local or session storage):
-       if ( sessionStorage.getItem("token") !== undefined && localStorage.getItem("token") !== undefined ) {
-        window.location.href = "/";
-        
-      }
-    }
-
   };
 
 })();
