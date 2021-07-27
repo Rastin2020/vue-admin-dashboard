@@ -3,3 +3,4 @@ certs/
 letsencrypt/
 scripts/
 .env
+docker-compose.yml
