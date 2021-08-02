@@ -29,8 +29,8 @@
           name="register_password_confirm" 
          autocomplete="off" v-model="registerPasswordConfirm">
         <br><br>
-        <p class="text-wrap high-line">Password must be at least twelve characters long, contain a number and 
-          special character <span class="input-hints-format">
+        <p class="text-wrap high-line">Password must be at least twelve characters long, contain an uppercase, 
+          a lowercase, a number and special character <span class="input-hints-format">
           ( ! " ? $ % ^ & )<span></p>
         <br>
         <button v-on:click="register(); scroll('error');" name="submit" class="main-button no-vertical-padding">
